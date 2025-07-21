@@ -4,9 +4,9 @@ import { useEffect , useState} from "react";
 import { useRouter } from "next/navigation";
 import { getUser } from "../../lib/auth"; 
 import { supabase } from "../../lib/supabaseClient";
-import Reports from "../../component/Reports";
 import ReportForm from "../../component/ReportForm";
 import ReportList from "../../component/ReportList";
+import { toast } from "react-toastify";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -24,7 +24,7 @@ export default function Dashboard() {
         .eq('id', user.id)
         .single();
       if (error) {
-        console.error("Error fetching profile:", error);
+        toast.error("Error fetching profile:", error);
         return;
       }
       setProfile(data);
