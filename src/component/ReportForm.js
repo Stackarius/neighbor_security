@@ -23,7 +23,6 @@ export default function ReportForm({ user }) {
 
     if (error) {
       toast.error("Failed to submit report.");
-      console.error(error);
     } else {
       toast.success("Report submitted successfully!");
       setTitle("");

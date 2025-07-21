@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
+import { toast } from "react-toastify";
 
 export default function ReportList({ user }) {
   const [reports, setReports] = useState([]);
@@ -17,7 +18,7 @@ export default function ReportList({ user }) {
         .order("created_at", { ascending: false });
 
       if (error) {
-        console.error("Failed to fetch reports:", error);
+       toast.error("Failed to fetch reports:", error);
       } else {
         setReports(data);
       }
