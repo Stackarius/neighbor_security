@@ -1,70 +1,86 @@
 "use client";
 
-import { useState } from "react";
-import { supabase } from "../lib/supabaseClient";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { supabase } from "@/lib/supabaseClient";
 
-export default function ReportForm({ user }) {
+export default function ReportForm() {
+  const router = useRouter();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  const [zone, setZone] = useState("");
+  const [userId, setUserId] = useState("");
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        setUserId(user.id);
+      } else {
+        toast.error("Please log in to submit a report.");
+        router.push("/login");
+      }
+    };
+    fetchUser();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitting(true);
 
-    const { data, error } = await supabase.from("reports").insert([
-      {
-        title,
-        description,
-        user_id: user.id, // This assumes you pass the logged-in user as prop
-      },
-    ]);
+    if (!title || !description) {
+      toast.error("All fields are required");
+      return;
+    }
+
+    const { error } = await supabase
+      .from("reports")
+      .insert([{ title, description, zone, user_id: userId }]);
 
     if (error) {
-      toast.error("Failed to submit report.");
+      toast.error("Error submitting report: " + error.message);
     } else {
       toast.success("Report submitted successfully!");
       setTitle("");
       setDescription("");
+      setZone("");
     }
-
-    setSubmitting(false);
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white p-4 rounded shadow w-full mx-auto"
+      className="w-full max-w-md bg-white p-4 rounded shadow space-y-4"
     >
-      <h2 className="text-xl font-bold mb-4">Submit New Report</h2>
-      <label className="block mb-2 font-semibold">Title</label>
+      <h2 className="text-xl font-bold">Submit a Security Report</h2>
       <input
+        className="w-full border p-2 rounded"
         type="text"
+        placeholder="Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        required
-        className="w-full border px-3 py-2 mb-4 rounded"
       />
-
-      <label className="block mb-2 font-semibold">Description</label>
       <textarea
+        className="w-full border p-2 rounded"
+        placeholder="Description"
+        rows={4}
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        required
-        className="w-full border px-3 py-2 mb-4 rounded"
-        rows="4"
       ></textarea>
-
-          <label className="block mb-2 font-semibold">Photo</label>
-          <input type="file" accept="image/*" className="border w-full py-2 rounded mb-2" />
-
+      <input
+        className="w-full border p-2 rounded"
+        type="text"
+        placeholder="Zone"
+        value={zone}
+        onChange={(e) => setZone(e.target.value)}
+      />
       <button
         type="submit"
-        disabled={submitting}
         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
       >
-        {submitting ? "Submitting..." : "Submit Report"}
+        Submit Report
       </button>
     </form>
   );
