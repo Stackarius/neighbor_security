@@ -6,6 +6,7 @@ export const register = async(email, password) => {
         email,
         password,
     });
+  
 
     if (error) {
         throw new Error(error.message);
