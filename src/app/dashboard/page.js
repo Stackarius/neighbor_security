@@ -7,6 +7,7 @@ import { supabase } from "../../lib/supabaseClient";
 import ReportForm from "../../component/ReportForm";
 import ReportList from "../../component/ReportList";
 import { toast } from "react-toastify";
+import { motion } from "framer-motion";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -21,7 +22,7 @@ export default function Dashboard() {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', user.id)
+        .eq('id', user?.id)
         .single();
       if (error) {
         toast.error("Error fetching profile:", error);
@@ -33,6 +34,11 @@ export default function Dashboard() {
   }, [router]);
 
   return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen ">
     <div className="flex flex-col p-6 max-h-screen overflow-y-auto">
         <h2 className="text-3xl font-bold mb-4">Welcome to Your Dashboard</h2>
         <p className="text-gray-700">
@@ -44,5 +50,6 @@ export default function Dashboard() {
         <ReportForm user={profile} />
       </div>
     </div>
+    </motion.div>
   );
 }
