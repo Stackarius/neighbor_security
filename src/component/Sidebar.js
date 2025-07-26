@@ -1,9 +1,15 @@
 "use client";
+
+import { logout } from "@/lib/auth";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { useRouter } from "next/navigation";
+import LogoutButton from "./LogoutButton";
+
 export default function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter()
 
   const navItems = [
     { name: "Home", href: "/dashboard" },
@@ -13,13 +19,13 @@ export default function Sidebar() {
 
   return (
     <aside className="w-64 bg-gray-900 text-white p-4 space-y-4">
-      <h2 className="text-xl font-bold mb-6">Security Watch</h2>
+      <h2 className="text-2xl font-bold mb-6">Security Watch</h2>
       <ul className="space-y-2">
         {navItems.map((item) => (
           <li key={item.name}>
             <Link
               href={item.href}
-              className={`block px-2 py-1 rounded hover:bg-blue-700 ${
+              className={`block px-2 font-semibold py-1 rounded hover:bg-blue-700 ${
                 pathname === item.href ? "bg-gray-700" : ""
               }`}
             >
@@ -28,6 +34,7 @@ export default function Sidebar() {
           </li>
         ))}
       </ul>
+      <LogoutButton/>
     </aside>
   );
 }
