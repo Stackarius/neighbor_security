@@ -80,7 +80,7 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             className=" text-white py-20 text-center"
           >
-            <h1 className="text-6xl font-bold mb-4">
+            <h1 className="text-4xl md:text-6xl font-bold mb-4">
               Neighbourhood Security Watch
             </h1>
             <motion.p
@@ -92,19 +92,21 @@ export default function Home() {
               Stay alert. Stay safe. Report any suspicious activity in your
               area.
             </motion.p>
-            <Link href={user ? "/dashboard" : "/login"}>
-              <button className="bg-white text-blue-900 font-semibold px-6 py-2 rounded hover:bg-gray-200 transition">
-                {user ? "Go to Dashboard" : "Login to Report"}
-              </button>
-            </Link>
-            <motion.a
-              href="/report"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-yellow-400 ml-8 hover:bg-yellow-500 text-black px-6 py-3 rounded font-semibold transition"
-            >
-              Report an Incident
-            </motion.a>
+            <div className="flex flex-wrap items-center justify-center mx-auto gap-3">
+              <Link href={user ? "/dashboard" : "/login"}>
+                <button className="bg-white text-blue-900 font-semibold px-6 py-2 rounded hover:bg-gray-200 transition-300">
+                  {user ? "Go to Dashboard" : "Login to Report"}
+                </button>
+              </Link>
+              <Link
+                href="/report"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-yellow-400 w-fit mx-auto hover:bg-yellow-500 text-black px-6 py-2 rounded font-semibold transition"
+              >
+                Report an Incident
+              </Link>
+            </div>
           </motion.section>
         </div>
       </div>
@@ -155,21 +157,19 @@ export default function Home() {
           protected.
         </p>
         <div className="flex flex-col sm:flex-row justify-around mt-8 gap-12">
-          {workCards.map(
-            (card, i) => (
-              <motion.div
-                key={i}
-                className="bg-gray-100 shadow-md p-4 py-6 rounded w-full sm:w-1/3"
-                whileHover={{ scale: 1.05 }}
-              >
-                <div className="flex flex-col items-center" key={i}>
-                  <span>{card.illustration}</span>
-                  <h2 className="font-bold mt-4 ">{card.heading}</h2>
-                  <p className="text-sm/6">{card.desc}</p>
-                </div>
-              </motion.div>
-            )
-          )}
+          {workCards.map((card, i) => (
+            <motion.div
+              key={i}
+              className="bg-gray-100 shadow-md p-4 py-6 rounded w-full sm:w-1/3"
+              whileHover={{ scale: 1.05 }}
+            >
+              <div className="flex flex-col items-center" key={i}>
+                <span>{card.illustration}</span>
+                <h2 className="font-bold mt-4 ">{card.heading}</h2>
+                <p className="text-sm/6">{card.desc}</p>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </motion.section>
 
