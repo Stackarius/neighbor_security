@@ -38,18 +38,21 @@ export default function Dashboard() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen ">
-    <div className="flex flex-col p-6 max-h-screen overflow-y-auto">
-        <h2 className="text-3xl font-bold mb-4">Welcome to Your Dashboard</h2>
-        <p className="text-gray-700">
+      className="min-h-screen"
+    >
+      <div className="flex flex-col md:p-6 max-h-screen overflow-y-auto">
+        <h2 className="w-[90%] text-xl md:text-3xl font-bold mt-6 mb-3">
+          Welcome to Your Dashboard
+        </h2>
+        <p className="text-gray-700 w-[90%] text-sm">
           Here you can monitor reports and manage your profile.
         </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-        <ReportList user={profile} />
-        <ReportForm user={profile} />
+        <div className="flex flex-wrap justify-between gap-4 mt-6 py-4 md:mr-12">
+          <ReportList user={profile} />
+          <ReportForm user={profile} />
+        </div>
       </div>
-    </div>
     </motion.div>
   );
 }
