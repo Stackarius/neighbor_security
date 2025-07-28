@@ -25,7 +25,7 @@ export default function ReportForm() {
       }
     };
     fetchUser();
-  }, []);
+  }, [router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -52,18 +52,18 @@ export default function ReportForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-full max-w-md bg-white p-4 rounded shadow space-y-4"
+      className="w-full md:w-[400px] bg-white p-4 rounded shadow-lg space-y-4"
     >
-      <h2 className="text-xl font-bold">Submit a Security Report</h2>
+      <h2 className="text-md font-bold md:text-2xl">Submit a Security Report</h2>
       <input
-        className="w-full border p-2 rounded"
+        className="w-full border p-1 sm:px-2 rounded"
         type="text"
         placeholder="Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
       <textarea
-        className="w-full border p-2 rounded"
+        className="w-full border p-2 rounded resize-none"
         placeholder="Description"
         rows={4}
         value={description}
@@ -78,7 +78,7 @@ export default function ReportForm() {
       />
       <button
         type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        className="bg-blue-600 w-full text-white px-4 py-2 rounded hover:bg-blue-700"
       >
         Submit Report
       </button>

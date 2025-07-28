@@ -32,17 +32,17 @@ export default function ReportList({ user }) {
   if (loading) return <p>Loading reports...</p>;
 
   return (
-    <div className="bg-white p-4 rounded shadow w-full mr-auto">
-      <h2 className="text-lg font-bold mb-4">Recent Reports</h2>
+    <div className="p-2 w-full md:w-[400px]">
+      <h2 className="text-2xl font-bold mb-4">Recent Reports</h2>
       {reports.length === 0 ? (
         <p className="text-gray-500">No reports found.</p>
       ) : (
-        <ul className="space-y-4">
+        <ul className="grid grid-cols-1 gap-2">
           {reports?.map((report) => (
-            <li key={report.id} className="border bg-white p-3 rounded shadow-sm">
-              <h3 className="text-xl font-semibold text-blue-700 mb-2">{report.title}</h3>
+            <li key={report.id} className="border bg-white p-2 rounded shadow-sm w-[100%]">
+              <h3 className="text-sm/4 md:text-lg font-semibold text-blue-700 mb-1">{report.title}</h3>
               <p className="text-sm text-gray-600">{report.description}</p>
-              <p className="text-xs text-gray-400 mt-2">
+              <p className="text-xs text-gray-400">
                 Posted on {new Date(report.created_at).toLocaleString()}
               </p>
               {report.user_id === user?.id && (
