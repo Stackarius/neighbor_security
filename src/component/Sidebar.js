@@ -1,11 +1,11 @@
 "use client";
 
-import { logout } from "@/lib/auth";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { useRouter } from "next/navigation";
 import LogoutButton from "./LogoutButton";
+import { motion } from "framer-motion";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -18,8 +18,14 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 bg-gray-900 text-white p-4 space-y-4">
-      <h2 className="text-2xl font-bold mb-6">Security Watch</h2>
+    <motion.div
+      initial={{ opacity: 0, x: -100 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ease: "anticipate", duration: 0.5 }}
+
+      className="fixed w-60 h-[100vh] bg-gray-900 shadow-md md:shadow-none  text-white p-4 space-y-4 md:block md:relative"
+    >
+      <h2 className="text-xl font-bold mb-6">Security Watch</h2>
       <ul className="space-y-2">
         {navItems.map((item) => (
           <li key={item.name}>
@@ -34,7 +40,7 @@ export default function Sidebar() {
           </li>
         ))}
       </ul>
-      <LogoutButton/>
-    </aside>
+      <LogoutButton />
+    </motion.div>
   );
 }
