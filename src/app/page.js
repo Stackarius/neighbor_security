@@ -92,7 +92,7 @@ export default function Home() {
               Stay alert. Stay safe. Report any suspicious activity in your
               area.
             </motion.p>
-            <div className="flex flex-wrap items-center justify-center mx-auto gap-3">
+            <div className="flex flex-wrap items-center justify-center mx-auto gap-3 md:block" >
               <Link href={user ? "/dashboard" : "/login"}>
                 <button className="bg-white text-blue-900 font-semibold px-6 py-2 rounded hover:bg-gray-200 transition-300">
                   {user ? "Go to Dashboard" : "Login to Report"}
@@ -100,9 +100,8 @@ export default function Home() {
               </Link>
               <Link
                 href="/report"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-yellow-400 w-fit mx-auto hover:bg-yellow-500 text-black px-6 py-2 rounded font-semibold transition"
+                
+                className="bg-yellow-400 w-fit mx-auto hover:bg-yellow-500 text-black px-6 py-2 rounded font-semibold transition md:ml-8"
               >
                 Report an Incident
               </Link>
