@@ -58,7 +58,7 @@ export default function ReportsPage() {
           <ReportForm/>
 
           {/*  */}
-          <ul className="space-y-4 grid grid-cols-1 items-center">
+          <ul className="space-y-4 grid grid-cols-1 items-center md:items-start">
             {reports?.map((report) => (
               <motion.li
                 initial={{ opacity: 0, y: 20 }}
