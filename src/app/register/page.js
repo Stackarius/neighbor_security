@@ -23,6 +23,8 @@ export default function Register() {
     try {
       setLoading(true)
       await register(email, password)
+      toast.success("Registration successful! Please log in to complete your profile.");
+      router.push("/login");
     } catch (err) {
       setLoading(false)
       toast.error("An unexpected error occured, can't register new user");
