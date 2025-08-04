@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { login } from "../../lib/auth";
 import Link from "next/link";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function Login() {
   const router = useRouter();
@@ -15,10 +16,11 @@ export default function Login() {
   const handleLogin = async (e) => {
     
     e.preventDefault();
+
     try {
       setLoading(true)
+      const user = await login(email, password);
 
-      await login(email, password);
       // Get user profile to check role
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
@@ -30,14 +32,13 @@ export default function Login() {
       if (profile && profile.user_role == "admin") {
         setLoading(false)
         router.push("/admin");
-      } else if (profileError) {
-        toast.error("CANNOT AUTHENTICATE USER NOW, TRY IN FEW MINUTES")
+      } else {
+        setLoading(false)
+        router.push("/dashboard");
       }
-      setLoading(true)
-      router.push("/dashboard");
     } catch (err) {
-      setLoading(false)
-      toast.error(err.message || "Login failed");
+      setLoading(false);
+      toast.error("Login failed: " + err.message);
     }
   };
 
