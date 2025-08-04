@@ -6,44 +6,50 @@ import { supabase } from "../lib/supabaseClient";
 import Link from "next/link";
 import { FaClock, FaWpforms } from "react-icons/fa";
 import { Verified, UserLock, User, LucideUserLock } from "lucide-react";
+import ContactForm from "@/component/ContactForm";
 
 export default function Home() {
+  const [reports, setReports] = useState([]);
+  const [user, setUser] = useState(null);
 
- const [reports, setReports] = useState([]);
- const [user, setUser] = useState(null);
+  useEffect(() => {
+    const fetchReportsAndUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user);
 
- useEffect(() => {
-   const fetchReportsAndUser = async () => {
-     const {
-       data: { user },
-     } = await supabase.auth.getUser();
-     setUser(user);
+      const { data, error } = await supabase
+        .from("reports")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(3);
 
-     const { data, error } = await supabase
-       .from("reports")
-       .select("*")
-       .order("created_at", { ascending: false })
-       .limit(3);
+      if (!error) setReports(data);
+    };
 
-     if (!error) setReports(data);
-   };
+    fetchReportsAndUser();
+  }, []);
 
-   fetchReportsAndUser();
- }, []);
-  
+  const otherLinks = [
+    { id: 1, href: "/", name: "Home" },
+    { id: 2, href: "#works", name: "Works" },
+    { id: 3, href: "#contact", name: "Contact" },
+  ];
+
   const heroCards = [
     {
-      illustration: <FaClock size={50} className="text-blue-500"/>,
+      illustration: <FaClock size={50} className="text-blue-500" />,
       heading: "Fast Reporting",
       desc: " quickly alert your community about suspicious events.",
     },
     {
-      illustration: <Verified size={50} className="text-blue-500"/>,
+      illustration: <Verified size={50} className="text-blue-500" />,
       heading: "Verified Alerts",
       desc: " quickly alert your community about suspicious events.",
     },
     {
-      illustration: <UserLock size={50} className="text-blue-500"/>,
+      illustration: <UserLock size={50} className="text-blue-500" />,
       heading: "Privacy Protected",
       desc: " quickly alert your community about suspicious events.",
     },
@@ -70,9 +76,28 @@ export default function Home() {
     <main className="w-full">
       {/* Hero Section */}
       <div
-        className="relative h-[80vh] bg-cover bg-center"
+        className="relative h-[100vh] bg-cover bg-center"
         style={{ backgroundImage: "url('/hands.jpg')" }}
       >
+        {/*  */}
+        <nav className="relative bg-transparent w-full flex items-center p-3 z-10">
+          <Link href="/" className="text-white font-semibold text-2xl mx-4">
+            NSW
+          </Link>
+          {/* other links */}
+          <div className="flex ml-auto">
+            {otherLinks.map((link) => (
+              <Link
+                href={link.href}
+                key={link.id}
+                className="inline text-lg text-white px-5 py-3 mx-2 hover:text-yellow-500"
+              >
+                {link.name}
+              </Link>
+            ))}
+          </div>
+        </nav>
+        {/*  */}
         <div className="absolute text-center inset-0 bg-gradient-to-br from-black-400 to-gray-900 bg-opacity-10 flex flex-col items-center justify-center text-white text-center px-4">
           <motion.section
             initial={{ opacity: 0, y: -30 }}
@@ -92,7 +117,7 @@ export default function Home() {
               Stay alert. Stay safe. Report any suspicious activity in your
               area.
             </motion.p>
-            <div className="flex flex-wrap items-center justify-center mx-auto gap-3 md:block" >
+            <div className="flex flex-wrap items-center justify-center mx-auto gap-3 md:block">
               <Link href={user ? "/dashboard" : "/login"}>
                 <button className="bg-white text-blue-900 font-semibold px-6 py-2 rounded hover:bg-gray-200 transition-300">
                   {user ? "Go to Dashboard" : "Login to Report"}
@@ -100,7 +125,6 @@ export default function Home() {
               </Link>
               <Link
                 href="/report"
-                
                 className="bg-yellow-400 w-fit mx-auto hover:bg-yellow-500 text-black px-6 py-2 rounded font-semibold transition md:ml-8"
               >
                 Report an Incident
@@ -112,11 +136,12 @@ export default function Home() {
 
       {/* About Section */}
       <motion.section
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
+        initial={{ opacity: 0, y: -10 }}
+        whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        viewport={{ once: true }}
+        viewport={{ once: false }}
         className="py-16 px-4 max-w-4xl mx-auto text-center"
+        id="works"
       >
         <h2 className="text-2xl font-bold mb-4">Why Use Our Platform?</h2>
         <p className="text-gray-700 mb-6">
@@ -173,6 +198,14 @@ export default function Home() {
       </motion.section>
 
       {/*  */}
+      <motion.section
+        initial={{ opacity: 0, x: -10 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.5 }}
+        id="contact"
+      >
+        <ContactForm />
+      </motion.section>
 
       {/* Footer */}
       <footer className="bg-blue-600 text-white py-6 text-center mt-12">
