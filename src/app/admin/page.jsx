@@ -50,10 +50,8 @@ const AdminDashboard = () => {
 
       if (fetchError) {
         console.error("Failed to fetch users:", fetchError.message);
-      } else {
-        setUsers(allUsers);
       }
-
+      setUsers(allUsers);
       setLoading(false);
     };
 
@@ -62,17 +60,18 @@ const AdminDashboard = () => {
   }, [router]);
 
   const fetchReports = async () => {
-    const { data, error } = await supabase.from("reports").select("*");
+    const { data, error } = await supabase.from("reports").select("*").order("created_at", { ascending: false });
     if (error) {
       return error.message;
     }
     setReports(data);
   };
-  const handleDelete = async (userId) => {
+  const handleDelete = async (id) => {
     const { data, error } = await supabase
       .from("profiles")
       .delete()
-      .eq("id", userId);
+      .eq("id", id)
+      .single();
 
     if (error) {
       console.error("Delete failed:", error.message);
@@ -85,7 +84,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 md:p-12">
       <header className="flex items-center mb-4">
         <h1 className="text-2xl font-bold">Admin Dashboard</h1>
         <div className="ml-auto">
@@ -100,7 +99,7 @@ const AdminDashboard = () => {
             Quick Overview
           </h3>
           {/*  reports card */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
             <div className="bg-blue-600 py-2 px-4 rounded text-white w-fit font-semibold">
               <h3>Total reports</h3>
               <p className="text-center font-semibold">{reports.length}</p>
@@ -133,9 +132,9 @@ const AdminDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {reports.map((report) => (
+                {reports.map((report,index) => (
                   <tr key={report.id} className="border-t">
-                    <td className="px-4 py-2">{"N/A"}</td>
+                    <td className="px-4 py-2">{index}</td>
                     <td className="px-4 py-2">{report.title || "N/A"}</td>
                     <td className="px-4 py-2">{report.description}</td>
                     <td className="px-4 py-2">{report.zone}</td>
@@ -147,17 +146,24 @@ const AdminDashboard = () => {
                         className="bg-blue-600 text-white px-2 py-1 rounded font-semibold"
                         // Send email notification to residents
                         onClick={async () => {
-                          const {data: users, error: usersError} = await supabase
-                            .from("profiles").select("email")
-                            .eq("user_role", "resident");
-                          
+                          const { data: users, error: usersError } =
+                            await supabase
+                              .from("profiles")
+                              .select("email")
+                              .eq("user_role", "resident");
+
                           if (usersError) {
-                            console.error("Error fetching users:", usersError.message);
+                            console.error(
+                              "Error fetching users:",
+                              usersError.message
+                            );
                           }
 
                           const residentEmails = users
-                            .map((user) => user.email).join(", ").split(",");
-                          residentEmails.forEach(email => email.trim());
+                            .map((user) => user.email)
+                            .join(", ")
+                            .split(",");
+                          residentEmails.forEach((email) => email.trim());
 
                           if (residentEmails.length === 0) {
                             console.warn("No valid resident emails found.");
@@ -175,11 +181,11 @@ const AdminDashboard = () => {
                                 text: `${report.description}`,
                                 html: `<strong>A new report has been created:</strong> ${report.description}`,
                               }),
-                            }); 
+                            });
                           }
                         }}
                       >
-                        Broadcast
+                        Send
                       </button>
                       <DeleteButton click={() => handleDelete(report.id)} />
                     </td>
@@ -212,10 +218,10 @@ const AdminDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => (
+                {users.map((user, index) => (
                   <tr key={user.id} className="border-t">
-                    <td className="px-4 py-2">{}</td>
-                    <td className="px-4 py-2">{user.full_name || "N/A"}</td>
+                    <td className="px-4 py-2">{index}</td>
+                    <td className="px-4 py-2">{user.full_name}</td>
                     <td className="px-4 py-2">{user.email}</td>
                     <td className="px-4 py-2">{user.user_role}</td>
                     <td className="px-4 py-2">

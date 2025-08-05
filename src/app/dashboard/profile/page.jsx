@@ -72,6 +72,10 @@ export default function ProfilePage() {
       if (error) {
         toast.error("Failed to save profile: " + error.message);
       } else {
+        if (!profile.full_name || !profile.phone || !profile.address) {
+          toast.error("Please fill out all fields before saving.");
+          return;
+        }
         toast.success("Profile updated successfully");
       }
     } catch (err) {
@@ -92,8 +96,21 @@ export default function ProfilePage() {
             <input
               name="full_name"
               value={profile.full_name}
+
               onChange={handleChange}
               className="w-full p-2 mt-1 border rounded"
+            />
+          </label>
+
+          <label className="block mb-2">
+            <span className="font-semibold">Email</span>
+            <input
+              name="email"
+              value={profile.email}
+              onChange={handleChange}
+              className="w-full p-2 mt-1 border rounded"
+              readOnly
+              type="email"
             />
           </label>
 

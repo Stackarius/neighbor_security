@@ -3,13 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { useRouter } from "next/navigation";
 import LogoutButton from "./LogoutButton";
 import { motion } from "framer-motion";
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const router = useRouter()
 
   const navItems = [
     { name: "Home", href: "/dashboard" },
