@@ -72,37 +72,33 @@ export default function ReportForm() {
 
 
   async function sendEmail() {
-   const { data: users, error } = await supabase
-     .from("users")
-     .select("email")
-     .eq("user_role", "admin");
+    const { data: users, error: usersError } =
+      await supabase
+        .from("profiles")
+        .select("email")
+        .eq("user_role", "admin");
 
-   if (error) {
-     console.error("Error fetching users:", error.message);
-     return;
-   }
+    if (usersError) {
+      console.error(
+        "Error fetching users:",
+        usersError.message
+      );
+      return;
+    }
+    const adminMail = users.map((user) => user.email);
 
-   const adminEmails = users
-     .map((user) => user.email)
-     .join(", ");
-
-   if (adminEmails.length === 0) {
-     console.warn("No valid admin emails found.");
-     return;
-   }
-
-   await fetch("/api/send-notification", {
-     method: "POST",
-     headers: {
-       "Content-Type": "application/json",
-     },
-     body: JSON.stringify({
-       to: adminEmails, // array of emails
-       subject: `New report: ${report.title}`,
-       text: `${report.description}`,
-       html: `<strong>A new report has been created:</strong> ${report.description}`,
-     }),
-   });
+    await fetch("/api/send-notification", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        to: `${adminMail}`, // array of emails
+        subject: `New report: ${report.title}`,
+        text: `${report.description}`,
+        html: `<strong>A new report has been created:</strong> ${report.description}`,
+      }),
+    });
 
    }
 
