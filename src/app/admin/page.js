@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient"; // adjust this path to your supabase setup
+import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import LogoutButton from "@/component/LogoutButton";
 import { motion } from "framer-motion";
@@ -37,9 +37,9 @@ const AdminDashboard = () => {
         .eq("id", user.id)
         .single();
 
-        if (profileError || profile.user_role !== "admin") {
-          toast.error("UNAUTHORIZED USERS DO NOT HAVE ACCESS")
-        router.push("/login");
+      if (profileError || profile.user_role !== "admin") {
+        toast.error("UNAUTHORIZED USERS DO NOT HAVE ACCESS");
+        router.replace("/login");
         return;
       }
 
@@ -129,6 +129,7 @@ const AdminDashboard = () => {
                   <th className="text-left px-4 py-2">Description</th>
                   <th className="text-left px-4 py-2">Zone</th>
                   <th className="text-left px-4 py-2">Date Created</th>
+                  <th className="text-left px-4 py-2">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -139,7 +140,48 @@ const AdminDashboard = () => {
                     <td className="px-4 py-2">{report.description}</td>
                     <td className="px-4 py-2">{report.zone}</td>
                     <td className="px-4 py-2">
-                      {new Date(report.created_at).toLocaleString()}
+                      {new Date(report.created_at).toLocaleDateString("en-US")}
+                    </td>
+                    <td className="px-4 py-2 flex items-center gap-2">
+                      <button
+                        className="bg-blue-600 text-white px-2 py-1 rounded font-semibold"
+                        // Send email notification to residents
+                        onClick={async () => {
+                          const {data: users, error: usersError} = await supabase
+                            .from("profiles").select("email")
+                            .eq("user_role", "resident");
+                          
+                          if (usersError) {
+                            console.error("Error fetching users:", usersError.message);
+                          }
+
+                          const residentEmails = users
+                            .map((user) => user.email).join(", ").split(",");
+                          residentEmails.forEach(email => email.trim());
+
+                          if (residentEmails.length === 0) {
+                            console.warn("No valid resident emails found.");
+                          }
+                          console.log(`Sending email to: ${residentEmails}`);
+                          for (const email of residentEmails) {
+                            await fetch("/api/send-notification", {
+                              method: "POST",
+                              headers: {
+                                "Content-Type": "application/json",
+                              },
+                              body: JSON.stringify({
+                                to: `${email.trim()}`, // array of emails
+                                subject: `New report: ${report.title}`,
+                                text: `${report.description}`,
+                                html: `<strong>A new report has been created:</strong> ${report.description}`,
+                              }),
+                            }); 
+                          }
+                        }}
+                      >
+                        Broadcast
+                      </button>
+                      <DeleteButton click={() => handleDelete(report.id)} />
                     </td>
                   </tr>
                 ))}
