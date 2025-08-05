@@ -9,7 +9,6 @@ import { Verified, UserLock, User, LucideUserLock } from "lucide-react";
 import ContactForm from "@/component/ContactForm";
 
 export default function Home() {
-  const [reports, setReports] = useState([]);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -18,14 +17,6 @@ export default function Home() {
         data: { user },
       } = await supabase.auth.getUser();
       setUser(user);
-
-      const { data, error } = await supabase
-        .from("reports")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(3);
-
-      if (!error) setReports(data);
     };
 
     fetchReportsAndUser();
@@ -124,7 +115,7 @@ export default function Home() {
                 </button>
               </Link>
               <Link
-                href="/report"
+                href="/reports"
                 className="bg-yellow-400 w-fit mx-auto hover:bg-yellow-500 text-black px-6 py-2 rounded font-semibold transition md:ml-8"
               >
                 Report an Incident
