@@ -22,8 +22,8 @@ export async function POST(request) {
     }
 
     const emailResponse = await resend.emails.send({
-      from: "NSW Security <onboarding@resend.dev>", // This must be a verified domain in Resend
-      to, // Can be string or array
+      from: "NSW Security <onboarding@resend.dev>", 
+      to, // string or array of emails
       subject,
       text,
       html,
