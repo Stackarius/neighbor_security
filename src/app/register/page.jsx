@@ -37,7 +37,7 @@ export default function Register() {
       className="relative items-center w-full h-[100vh] bg-cover bg-center flex flex-col m-auto justify-center p-4 "
       style={{ backgroundImage: "url('/hands.jpg')" }}
     >
-      <div>
+      
         <form
           onSubmit={handleRegister}
           className="flex flex-col gap-2 bg-blue-100 p-4 rounded shadow-md w-full md:w-[500px]"
@@ -124,7 +124,7 @@ export default function Register() {
             Login
           </Link>
         </div>
-      </div>
+      
     </div>
   );  
 }
