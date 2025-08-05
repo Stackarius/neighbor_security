@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { supabase } from "@/lib/supabaseClient";
-import { createServerSupabaseClient } from "@/lib/supabaseServer";
 
 export default function ReportForm() {
   const router = useRouter();
@@ -14,7 +13,6 @@ export default function ReportForm() {
   const [userId, setUserId] = useState("");
 
   useEffect(() => {
-
     
     const fetchUser = async () => {
       const {
@@ -33,10 +31,7 @@ export default function ReportForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const supabase = await createServerSupabaseClient();
-    const { message, location } = await req.json();
-    const { data: { user } } = await supabase.auth.getUser();
-
+    
     if (!title || !description) {
       toast.error("All fields are required");
       return;
@@ -53,23 +48,11 @@ export default function ReportForm() {
 
       sendEmail();
 
-      const { data: residents } = await supabase
-        .from('auth.users')
-        .select('id')
-        .neq('id', user.id);
-
-      await createNotification(
-        `New report: ${message} at ${location}`,
-        residents.map((r) => r.id),
-        report.id
-      );
-
       setTitle("");
       setDescription("");
       setZone("");
     }
   };
-
 
   async function sendEmail() {
     const { data: users, error: usersError } =
@@ -94,9 +77,9 @@ export default function ReportForm() {
       },
       body: JSON.stringify({
         to: `${adminMail}`, // array of emails
-        subject: `New report: ${report.title}`,
-        text: `${report.description}`,
-        html: `<strong>A new report has been created:</strong> ${report.description}`,
+        subject: `New report: ${title}`,
+        text: `${description}`,
+        html: `<strong>A new report has been created:</strong> ${description}`,
       }),
     });
 
