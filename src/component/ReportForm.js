@@ -30,6 +30,8 @@ export default function ReportForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+   
+
     if (!title || !description) {
       toast.error("All fields are required");
       return;
@@ -43,11 +45,49 @@ export default function ReportForm() {
       toast.error("Error submitting report: " + error.message);
     } else {
       toast.success("Report submitted successfully!");
+
+      sendEmail();
+
       setTitle("");
       setDescription("");
       setZone("");
     }
   };
+
+  async function sendEmail() {
+   const { data: users, error } = await supabase
+     .from("users")
+     .select("email")
+     .eq("user_role", "admin");
+
+   if (error) {
+     console.error("Error fetching users:", error.message);
+     return;
+   }
+
+   const adminEmails = users
+     .map((user) => user.email)
+     .join(", ");
+
+   if (adminEmails.length === 0) {
+     console.warn("No valid admin emails found.");
+     return;
+   }
+
+   await fetch("/api/send-notification", {
+     method: "POST",
+     headers: {
+       "Content-Type": "application/json",
+     },
+     body: JSON.stringify({
+       to: adminEmails, // array of emails
+       subject: `New report: ${report.title}`,
+       text: `${report.description}`,
+       html: `<strong>A new report has been created:</strong> ${report.description}`,
+     }),
+   });
+
+   }
 
   return (
     <form
