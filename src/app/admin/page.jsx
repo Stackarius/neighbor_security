@@ -132,7 +132,7 @@ const AdminDashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {reports.map((report,index) => (
+                {reports.map((report, index) => (
                   <tr key={report.id} className="border-t">
                     <td className="px-4 py-2">{index}</td>
                     <td className="px-4 py-2">{report.title || "N/A"}</td>
@@ -144,46 +144,77 @@ const AdminDashboard = () => {
                     <td className="px-4 py-2 flex items-center gap-2">
                       <button
                         className="bg-blue-600 text-white px-2 py-1 rounded font-semibold"
-                        // Send email notification to residents
                         onClick={async () => {
                           const { data: users, error: usersError } =
                             await supabase
                               .from("profiles")
                               .select("email")
-                              .eq("user_role", "resident");
+                              .eq("user_role", "admin");
 
                           if (usersError) {
                             console.error(
                               "Error fetching users:",
                               usersError.message
                             );
+                            return;
                           }
+                          const residentsMail = users.map((user) => user.email);
 
-                          const residentEmails = users
-                            .map((user) => user.email)
-                            .join(", ")
-                            .split(",");
-                          residentEmails.forEach((email) => email.trim());
+                          await fetch("/api/send-notification", {
+                            method: "POST",
+                            headers: {
+                              "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                              to: `${residentsMail}`, // array of emails
+                              subject: `New report: ${report.title}`,
+                              text: `${report.description}`,
+                              html: `<strong>A new report has been created:</strong> ${report.description}`,
+                            }),
+                          });
+                        }
+                        }
 
-                          if (residentEmails.length === 0) {
-                            console.warn("No valid resident emails found.");
-                          }
-                          console.log(`Sending email to: ${residentEmails}`);
-                          for (const email of residentEmails) {
-                            await fetch("/api/send-notification", {
-                              method: "POST",
-                              headers: {
-                                "Content-Type": "application/json",
-                              },
-                              body: JSON.stringify({
-                                to: `${email.trim()}`, // array of emails
-                                subject: `New report: ${report.title}`,
-                                text: `${report.description}`,
-                                html: `<strong>A new report has been created:</strong> ${report.description}`,
-                              }),
-                            });
-                          }
-                        }}
+                      // Send email notification to residents
+                      /* onClick={async () => {
+                        const { data: users, error: usersError } =
+                          await supabase
+                            .from("profiles")
+                            .select("email")
+                            .eq("user_role", "resident");
+
+                        if (usersError) {
+                          console.error(
+                            "Error fetching users:",
+                            usersError.message
+                          );
+                        }
+
+                        const residentEmails = users
+                          .map((user) => user.email)
+                          .join(", ")
+                          .split(",");
+                        residentEmails.forEach((email) => email.trim());
+
+                        if (residentEmails.length === 0) {
+                          console.warn("No valid resident emails found.");
+                        }
+                        console.log(`Sending email to: ${residentEmails}`);
+                        for (const email of residentEmails) {
+                          await fetch("/api/send-notification", {
+                            method: "POST",
+                            headers: {
+                              "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                              to: `${email.trim()}`, // array of emails
+                              subject: `New report: ${report.title}`,
+                              text: `${report.description}`,
+                              html: `<strong>A new report has been created:</strong> ${report.description}`,
+                            }),
+                          });
+                        }
+                      }} */
                       >
                         Send
                       </button>
