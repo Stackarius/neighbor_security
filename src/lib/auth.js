@@ -13,7 +13,7 @@ export const register = async (email, password) => {
     throw new Error(error.message);
   }
 
-  // 3. Check if user already exists in the profiles table
+  /* // 3. Check if user already exists in the profiles table
   const { data: existingProfile } = await supabase
     .from("profiles")
     .select("*")
@@ -27,8 +27,8 @@ export const register = async (email, password) => {
       email,
       full_name,
       user_role: "user",
-    });
-  }
+    }); */
+  
 
   return data;
 };
@@ -70,7 +70,7 @@ export const getUser = async () => {
 // Password reset
 export const resetPassword = async (email, id) => {
   const { data, error } = await supabase.auth.resetPasswordForEmail({
-    email,
+    email
   });
 
   if (error) {
