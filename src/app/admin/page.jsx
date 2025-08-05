@@ -149,7 +149,7 @@ const AdminDashboard = () => {
                             await supabase
                               .from("profiles")
                               .select("email")
-                              .eq("user_role", "admin");
+                              .eq("user_role", "resident");
 
                           if (usersError) {
                             console.error(
