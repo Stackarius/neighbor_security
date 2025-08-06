@@ -1,57 +1,38 @@
-import { Resend } from "resend";
+// app/api/send-notification/route.js
+import nodemailer from "nodemailer";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-export async function POST(request) {
+export async function POST(req) {
   try {
-    const body = await request.json();
-    const { to, subject, text, html } = body;
+    const { to, subject, text, html } = await req.json();
 
-    // Basic validation
-    if (!to || (!text && !html)) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          message: "Missing `to`, and either `text` or `html` field.",
-        }),
-        {
-          status: 422,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+    if (!to || !subject || (!text && !html)) {
+      return new Response("Missing required fields", { status: 400 });
     }
 
-    const emailResponse = await resend.emails.send({
-      from: "NSW Security <onboarding@resend.dev>",
-      to, // Ensure `to` is an array
+    // Configure transporter
+    const transporter = nodemailer.createTransport({
+      service: "gmail", // change to your SMTP provider
+      auth: {
+        user: process.env.GMAIL_EMAIL,
+        pass: process.env.GMAIL_PASS,
+      },
+    });
+
+    const mailOptions = {
+      from: `"Neighbourhood Watch" <${process.env.GMAIL_EMAIL}>`,
+      to, // comma-separated emails
       subject,
       text,
       html,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+
+    return new Response(JSON.stringify({ success: true, info }), {
+      status: 200,
     });
-
-    return new Response(
-      JSON.stringify({
-        success: true,
-        response: emailResponse,
-      }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-        message: `Email sent successfully to ${to}`,
-      }
-    );
   } catch (error) {
-    console.error("[Resend Error]", error);
-
-    return new Response(
-      JSON.stringify({
-        success: false,
-        message: error.message || "Something went wrong.",
-      }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    console.error("Email send error:", error);
+    return new Response("Failed to send email", { status: 500 });
   }
 }
