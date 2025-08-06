@@ -1,0 +1,16 @@
+.textContainer {
+  position: relative;
+  max-width: 80%; /* Adjust as needed */
+}
+
+.truncatedText {
+  display: -webkit-box;
+  line-clamp: 3; 
+  -webkit-line-clamp: 3; /* Number of lines to show */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+  line-height: 1.5em; /* Adjust based on font size */
+  max-height: 4.5em; /* line-height * number of lines */
+}
