@@ -13,23 +13,6 @@ export const register = async (email, password) => {
     throw new Error(error.message);
   }
 
-  /* // 3. Check if user already exists in the profiles table
-  const { data: existingProfile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("email", email)
-    .maybeSingle(); // avoids throwing if none
-
-  // 4. Insert profile if it doesn't exist
-  if (!existingProfile && data.user) {
-    await supabase.from("profiles").insert({
-      id: data.user.id,
-      email,
-      full_name,
-      user_role: "user",
-    }); */
-  
-
   return data;
 };
 
