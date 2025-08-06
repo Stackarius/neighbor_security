@@ -28,6 +28,12 @@ export default function Login() {
         .eq("id", user.id)
         .single();
       
+      if (profileError || !profile) {
+        toast.error("Error fetching user profile.");
+        setLoading(false);
+        return;
+      }
+      
       // user == admin => "/admin" : "/dashboard"
       if (profile && profile.user_role == "admin") {
         setLoading(false)
