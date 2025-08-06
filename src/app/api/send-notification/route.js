@@ -22,8 +22,8 @@ export async function POST(request) {
     }
 
     const emailResponse = await resend.emails.send({
-      from: "NSW Security <onboarding@resend.dev>", 
-      to, // string or array of emails
+      from: "NSW Security <onboarding@resend.dev>",
+      to, // Ensure `to` is an array
       subject,
       text,
       html,
@@ -37,6 +37,7 @@ export async function POST(request) {
       {
         status: 200,
         headers: { "Content-Type": "application/json" },
+        message: `Email sent successfully to ${to}`,
       }
     );
   } catch (error) {

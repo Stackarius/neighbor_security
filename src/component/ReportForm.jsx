@@ -59,7 +59,8 @@ export default function ReportForm() {
       await supabase
         .from("profiles")
         .select("email")
-        .eq("user_role", "admin");
+        .neq("email", null);
+        
 
     if (usersError) {
       console.error(
@@ -68,20 +69,26 @@ export default function ReportForm() {
       );
       return;
     }
-    const adminMail = users.map((user) => user.email);
 
-    await fetch("/api/send-notification", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        to: `${adminMail}`, // array of emails
-        subject: `New report: ${title}`,
-        text: `${description}`,
-        html: `<strong>A new report has been created:</strong> ${description}`,
-      }),
-    });
+    for (const email of users) {
+      const { email: userEmail } = email;
+      alert(userEmail);
+      if (!userEmail) continue;
+      // Send email notification
+
+      await fetch("/api/send-notification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          to: `${userEmail}`, // array of emails
+          subject: `New report: ${title}`,
+          text: `${description}`,
+          html: `<strong>A new report has been created:</strong> ${description} <br /> Location: ${zone}`,
+        }),
+      });
+    }
 
    }
 
