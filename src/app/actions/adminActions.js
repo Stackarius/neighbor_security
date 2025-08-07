@@ -1,4 +1,3 @@
-// app/actions/adminActions.js
 "use server";
 
 import { createServerSupabaseClient } from "@/lib/supabaseServer";
@@ -29,3 +28,4 @@ export async function deleteUser(id) {
   if (error) throw error;
   return true;
 }
+
