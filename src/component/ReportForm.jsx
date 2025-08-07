@@ -61,7 +61,6 @@ export default function ReportForm() {
         .select("email")
         .neq("email", null);
         
-
     if (usersError) {
       console.error(
         "Error fetching users:",
@@ -82,6 +81,7 @@ export default function ReportForm() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          from: "NSW Security <onboarding@resend.dev>",
           to: `${userEmail}`, // array of emails
           subject: `New report: ${title}`,
           text: `${description}`,
