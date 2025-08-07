@@ -8,7 +8,7 @@ import DeleteButton from "@/component/DeleteButton";
 import { toast } from "react-toastify";
 import { LayoutDashboard, Send } from "lucide-react";
 import FormattedText from "@/component/FormattedText";
-
+import ConfirmModal from "@/component/ConfirmModal";
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
@@ -16,17 +16,10 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // Delete report
-  async function deleteReport(id) { 
-    const { error } = await supabase.from("reports").delete().eq("id", id).single();
-    if (error) {
-      toast.error("Error deleting report: " + error.message);
-      return;
-    }
-    fetchReports();
-    console.log(id)
-    toast.success("Report deleted successfully!");
-  }
+  const [isDeleteOpen, setDeleteOpen] = useState(false);
+  const [isSendOpen, setSendOpen] = useState(false);
+  const [selectedReport, setSelectedReport] = useState(null);
+
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -81,6 +74,18 @@ const AdminDashboard = () => {
     }
     setReports(data);
   };
+
+  const deleteReport = async (id) => {
+    const { data, error } = await supabase
+      .from("reports")
+      .delete()
+      .eq("id", id).select();
+    if (error) {
+      console.log(error)
+    }
+    toast.success("Report deleted successfully!");
+    fetchReports();
+  }
 
   return (
     <div className="p-6 md:px-12 md:py-6">
@@ -170,14 +175,27 @@ const AdminDashboard = () => {
                         }
                       }}
                     ><Send className="inline mr-1" />Send</button>
-                    <DeleteButton click={
-                      async () => {
-                        if (confirm("Are you sure you want to delete this report?")) {
-                          await deleteReport(report.id);
-                        }
-                      }
+                    <DeleteButton click={() => {
+                      setSelectedReport(report); // Set the current report to delete
+                      setDeleteOpen(true);
+                    }} />
 
-                    }/>
+                    {/* Confirm Modal (place it once outside the .map loop) */}
+                    <ConfirmModal
+                      isOpen={isDeleteOpen}
+                      onClose={() => {
+                        setDeleteOpen(false);
+                        setSelectedReport(null);
+                      }}
+                      onConfirm={() => {
+                        if (selectedReport) deleteReport(selectedReport.id);
+                        setDeleteOpen(false);
+                        setSelectedReport(null);
+                      }}
+                      title="Delete Report"
+                      description="Are you sure you want to delete this report?"
+                    />
+
                   </div>
                 </div>
               </motion.div>
