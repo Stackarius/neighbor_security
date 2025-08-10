@@ -67,7 +67,7 @@ export default function Home() {
     <main className="w-full">
       {/* Hero Section */}
       <div
-        className="relative h-[100vh] bg-cover bg-center"
+        className="relative h-[100vh] bg-cover bg-center bg-fixed"
         style={{ backgroundImage: "url('/hands.jpg')" }}
       >
         {/*  */}
@@ -199,7 +199,7 @@ export default function Home() {
       </motion.section>
 
       {/* Footer */}
-      <footer className="bg-blue-600 text-white py-6 text-center mt-12">
+      <footer className="bg-black text-white py-6 text-center mt-12">
         <p>
           &copy; {new Date().getFullYear()} Neighbourhood Security Watch. All
           rights reserved.
