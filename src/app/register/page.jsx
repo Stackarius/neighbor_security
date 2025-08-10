@@ -6,9 +6,6 @@ import { toast } from "react-toastify";
 import Link from "next/link";
 
 export default function Register() {
-  const rolesOptions = ['resident', 'admin']
-
-  const [role, setRole] = useState('resident' || rolesOptions[0])
 
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -40,10 +37,10 @@ export default function Register() {
 
       <form
         onSubmit={handleRegister}
-        className="flex flex-col gap-2 bg-blue-100 p-4 rounded shadow-md w-full md:w-[500px]"
+        className="flex flex-col gap-2 bg-transparent backdrop-blur-lg bg-white/40 text-white py-4 px-8 rounded shadow-md w-full md:w-[400px]"
       >
         <h2 className="text-2xl font-bold my-3 text-center">Register</h2>
-        <p className="text-sm text-gray-700 mb-1 font-semibold">Email</p>
+        <p className="text-sm text-white mb-1 font-semibold">Email</p>
         <input
           type="email"
           placeholder="Email"
@@ -52,7 +49,7 @@ export default function Register() {
           required
           className="mb-2 border border-gray-400 rounded p-2"
         />
-        <p className="text-sm text-gray-700 mb-1 font-semibold">Password</p>
+        <p className="text-sm text-white mb-1 font-semibold">Password</p>
 
         <input
           type="password"
@@ -62,7 +59,7 @@ export default function Register() {
           required
           className="mb-4 border border-gray-400 rounded p-2"
         />
-        <p className="text-sm text-gray-700 mb-1 font-semibold">
+        <p className="text-sm text-white mb-1 font-semibold">
           Confirm Password
         </p>
 
@@ -74,19 +71,6 @@ export default function Register() {
           required
           className="mb-4 border border-gray-400 rounded p-2"
         />
-        {/* Role */}
-        <select
-          className="mb-2 border border-gray-400  p-2"
-          onChange={() => {
-            setRole(role);
-          }}
-        >
-          {rolesOptions.map((role) => (
-            <option key={role} value={role} className="p-1 bg-white">
-              {role}
-            </option>
-          ))}
-        </select>
         <button
           type="submit"
           className={
@@ -120,7 +104,7 @@ export default function Register() {
       </form>
       <div className="flex p-2 text-white">
         <p>Already have an account? </p>
-        <Link href="/login" className="ml-auto font-semibold">
+        <Link href="/login" className="ml-4 font-semibold">
           Login
         </Link>
       </div>
