@@ -1,20 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import DeleteButton from "@/component/DeleteButton";
 import { toast } from "react-toastify";
-import { LayoutDashboard, Send } from "lucide-react";
+import { File, LayoutDashboard, Send } from "lucide-react";
 import FormattedText from "@/component/FormattedText";
 import ConfirmModal from "@/component/ConfirmModal";
+import { exportToPDF } from "@/utils/exportPDF";
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const ref = useRef();
 
   const [isDeleteOpen, setDeleteOpen] = useState(false);
   const [isSendOpen, setSendOpen] = useState(false);
@@ -89,12 +91,12 @@ const AdminDashboard = () => {
 
   return (
     <div className="p-6 md:px-12 md:py-6">
-      {!loading ? (
-        <div className="w-full">
           <h3 className="text-2xl font-semibold">
             <LayoutDashboard className="inline mr-2" />
             Quick Overview
           </h3>
+      {!loading ? (
+        <div className="w-full">
           {/*  reports card */}
           <div className="flex flex-wrap gap-4 my-4">
             <div className="bg-blue-600 py-4 px-4 w-fit rounded text-white font-semibold">
@@ -108,22 +110,27 @@ const AdminDashboard = () => {
           </div>
         </div>
       ) : (
-        <p>Loading Reports</p>
+        <p className="mt-4">Loading Reports</p>
       )}
-      {!loading &&(
+      {!loading && (
 
-        <div className="w-full h-full mt-5 overflow-y-auto">
+        <div className="w-full h-full mt-5 overflow-y-auto" ref={ref}>
           <h3 className="text-xl font-semibold mb-4">Recent Reports</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {reports.map((report) => (
               <motion.div
+                ref={ref}
                 key={report.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
                 className="bg-white p-6 rounded shadow mb-4 hover:shadow-lg transition-shadow duration-200"
               >
+                <div className="flex items-center justify-between">
                 <h2 className="font-semibold my-1">{report.title}</h2>
+                  <button onClick={() => exportToPDF(report)}><File className="inline mr-1" /></button>
+
+                </div>
                 <FormattedText text={report.description} />
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
                   <p className="text-sm text-gray-500">
@@ -174,7 +181,8 @@ const AdminDashboard = () => {
                           toast.error("Failed to send notifications.");
                         }
                       }}
-                    ><Send className="inline mr-1" />Send</button>
+                    >
+                      <Send className="inline mr-1" />Send</button>                    
                     <DeleteButton click={() => {
                       setSelectedReport(report); // Set the current report to delete
                       setDeleteOpen(true);
@@ -201,7 +209,7 @@ const AdminDashboard = () => {
               </motion.div>
             ))}
           </div>
-        
+
 
         </div>
       )}
