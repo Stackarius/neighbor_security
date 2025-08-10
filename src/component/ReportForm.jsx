@@ -12,26 +12,26 @@ export default function ReportForm() {
   const [zone, setZone] = useState("");
   const [userId, setUserId] = useState("");
 
+  const fetchUser = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      setUserId(user.id);
+    } else {
+      toast.error("Please log in to submit a report.");
+      router.push("/login");
+    }
+  };
+
   useEffect(() => {
     
-    const fetchUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        setUserId(user.id);
-      } else {
-        toast.error("Please log in to submit a report.");
-        router.push("/login");
-      }
-    };
     fetchUser();
   }, [router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    
     if (!title || !description) {
       toast.error("All fields are required");
       return;
@@ -71,7 +71,6 @@ export default function ReportForm() {
 
     for (const email of users) {
       const { email: userEmail } = email;
-      alert(userEmail);
       if (!userEmail) continue;
       // Send email notification
 
@@ -94,7 +93,9 @@ export default function ReportForm() {
 
   return (
     <form
-      onSubmit={handleSubmit}
+      onSubmit={() => {
+        handleSubmit()
+      }}
       className="w-full md:w-[400px] bg-white p-4 rounded shadow-lg space-y-4"
     >
       <h2 className="text-md font-bold md:text-2xl">Submit a Security Report</h2>
