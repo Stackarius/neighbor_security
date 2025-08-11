@@ -83,7 +83,7 @@ const AdminDashboard = () => {
       .delete()
       .eq("id", id).select();
     if (error) {
-      console.log(error)
+      toast.error("Error deleting report")
     }
     toast.success("Report deleted successfully!");
     fetchReports();
@@ -184,7 +184,7 @@ const AdminDashboard = () => {
                     >
                       <Send className="inline mr-1" />Send</button>                    
                     <DeleteButton click={() => {
-                      setSelectedReport(report); // Set the current report to delete
+                      setSelectedReport(report);
                       setDeleteOpen(true);
                     }} />
 
