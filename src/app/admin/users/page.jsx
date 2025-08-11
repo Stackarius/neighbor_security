@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { toast } from "react-toastify";
+import DeleteConfirmationModal from "@/component/ConfirmModal";
+import DeleteButton from "@/component/DeleteButton";
+import { DeleteIcon, LucideMoreVertical, Trash2Icon } from "lucide-react";
 
 export default function UsersPage() {
     const [users, setUsers] = useState([]);
@@ -60,7 +63,7 @@ export default function UsersPage() {
             <h2 className="text-2xl font-bold mb-4">All Users</h2>
 
             {/* Desktop Table */}
-            <table className="hidden md:table w-full border-collapse">
+            <table className="hidden md:table w-full border-collapse" border={1}>
                 <thead>
                     <tr>
                         <th className="text-left p-2">S/N</th>
@@ -92,13 +95,14 @@ export default function UsersPage() {
                                         e.stopPropagation();
                                         handleAdminToggle(user.id, user.user_role);
                                     }}
-                                    className={`px-3 py-1 rounded text-white transition-transform duration-200 ${user.user_role === "admin"
+                                    className={`px-3 py-1 rounded text-white transition-transform duration-200 w-fit ${user.user_role === "admin"
                                             ? "bg-red-500 hover:bg-red-600"
                                             : "bg-green-500 hover:bg-green-600"
                                         } ${loadingId === user.id ? "animate-pulse" : ""}`}
                                 >
                                     {user.user_role === "admin" ? "Remove Admin" : "Make Admin"}
                                 </button>
+                            
                             </td>
                         </tr>
                     ))}
