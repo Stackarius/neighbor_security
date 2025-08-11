@@ -7,6 +7,7 @@ import Link from "next/link";
 import { FaClock, FaWpforms } from "react-icons/fa";
 import { Verified, UserLock, User, LucideUserLock } from "lucide-react";
 import ContactForm from "@/component/ContactForm";
+import Header from "@/component/Header";
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -21,12 +22,6 @@ export default function Home() {
 
     fetchReportsAndUser();
   }, []);
-
-  const otherLinks = [
-    { id: 1, href: "/", name: "Home" },
-    { id: 2, href: "#works", name: "Works" },
-    { id: 3, href: "#contact", name: "Contact" },
-  ];
 
   const heroCards = [
     {
@@ -71,23 +66,7 @@ export default function Home() {
         style={{ backgroundImage: "url('/hands.jpg')" }}
       >
         {/*  */}
-        <nav className="relative bg-transparent w-full flex items-center p-3 z-10">
-          <Link href="/" className="text-white font-semibold text-2xl mx-4">
-            NSW
-          </Link>
-          {/* other links */}
-          <div className="flex ml-auto">
-            {otherLinks.map((link) => (
-              <Link
-                href={link.href}
-                key={link.id}
-                className="inline text-lg text-white px-5 py-3 mx-2 hover:text-yellow-500"
-              >
-                {link.name}
-              </Link>
-            ))}
-          </div>
-        </nav>
+       <Header/> 
         {/*  */}
         <div className="absolute text-center inset-0 bg-gradient-to-br from-black-400 to-gray-900 bg-opacity-10 flex flex-col items-center justify-center text-white text-center px-4">
           <motion.section
