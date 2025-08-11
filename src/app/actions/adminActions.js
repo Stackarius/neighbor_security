@@ -1,31 +1,33 @@
 "use server";
 
-import { createServerSupabaseClient } from "@/lib/supabaseServer";
+import { createClient } from "@supabase/supabase-js";
 
-export async function getAdminData() {
-  const supabase = await createServerSupabaseClient();
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
-  if (userError || !user) throw new Error("Unauthorized");
-
-  const { data: profile, error: profileError } = await supabase
-    .from("profiles")
-    .select("user_role")
-    .eq("id", user.id)
-    .single();
-  if (profileError || profile.user_role !== "admin") throw new Error("Unauthorized");
-
-  const [users, reports] = await Promise.all([
-    supabase.from("profiles").select("*"),
-    supabase.from("reports").select("*").order("created_at", { ascending: false }),
-  ]);
-
-  return { users: users.data, reports: reports.data };
+function createAdminSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY,
+    { auth: { persistSession: false } }
+  );
 }
 
 export async function deleteUser(id) {
-  const supabase = await createServerSupabaseClient();
-  const { error } = await supabase.from("profiles").delete().eq("id", id);
-  if (error) throw error;
+  const supabase = createAdminSupabaseClient();
+
+  // Delete related reports first
+  const { error: reportsError } = await supabase
+    .from("reports")
+    .delete()
+    .eq("user_id", id);
+
+  if (reportsError) throw reportsError;
+
+  // Delete the user profile
+  const { error: userError } = await supabase
+    .from("profiles")
+    .delete()
+    .eq("id", id);
+
+  if (userError) throw userError;
+
   return true;
 }
-
