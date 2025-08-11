@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { login } from "../../lib/auth";
 import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
+import Header from "@/component/Header";
 
 export default function Login() {
   const router = useRouter();
@@ -50,9 +51,13 @@ export default function Login() {
 
   return (
     <div
-      className="relative flex items-center justify-center h-[100vh] bg-cover bg-center"
+      className="absolute flex items-center justify-center w-full h-[100vh] bg-cover bg-center"
       style={{ backgroundImage: "url('/hands.jpg')" }}
     >
+      <div className="absolute top-0 left-0 w-full">
+      <Header/>
+      </div>
+
       <div className="flex flex-col items-center m-auto justify-center p-4 w-[500px] max-w-md">
         <form
           onSubmit={handleLogin}

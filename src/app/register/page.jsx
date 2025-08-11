@@ -1,9 +1,10 @@
 "use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { register } from "../../lib/auth";
-import { toast } from "react-toastify";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import { register } from "../../lib/auth";
+import Header from "@/component/Header";
 
 export default function Register() {
 
@@ -34,6 +35,9 @@ export default function Register() {
       className="relative items-center w-full h-[100vh] bg-cover bg-center flex flex-col m-auto justify-center p-4 "
       style={{ backgroundImage: "url('/hands.jpg')" }}
     >
+        <div className="absolute top-0 left-0 w-full">
+            <Header/>
+            </div>
 
       <form
         onSubmit={handleRegister}
