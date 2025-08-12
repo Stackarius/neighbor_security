@@ -4,7 +4,7 @@ const ContactForm = () => {
   return (
     <div className="grid mx-auto">
       <h2 className="text-2xl font-bold my-4 text-center">Contact Form</h2>
-      <form className="block bg-gray-100 p-8 mt-4 w-full md:w-[600px] rounded shadow-md">
+      <form className="block bg-gray-100 p-8 mt-4 mx-auto w-full md:w-[600px] rounded shadow-md">
         <div className="input-field">
           <label htmlFor="email">Email</label>
           <input type="email" />
