@@ -90,7 +90,7 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="p-6 md:px-12 md:py-6">
+    <div className="p-3 md:px-12 md:py-6">
           <h3 className="text-2xl font-semibold">
             <LayoutDashboard className="inline mr-2" />
             Quick Overview
@@ -128,8 +128,6 @@ const AdminDashboard = () => {
               >
                 <div className="flex items-center justify-between">
                 <h2 className="font-semibold my-1">{report.title}</h2>
-                  <button onClick={() => exportToPDF(report)}><File className="inline mr-1" /></button>
-
                 </div>
                 <FormattedText text={report.description} />
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
@@ -182,7 +180,7 @@ const AdminDashboard = () => {
                         }
                       }}
                     >
-                      <Send className="inline mr-1" />Send</button>                    
+                      <Send className="inline mr-1" size={15} />Send</button>                    
                     <DeleteButton click={() => {
                       setSelectedReport(report);
                       setDeleteOpen(true);
