@@ -4,8 +4,9 @@ import Image from 'next/image';
 import { Menu } from 'lucide-react';
 import { FaTimes } from 'react-icons/fa';
 
-const Header = () => {
+const Header = ({scrolled}) => {
     const [isOpen, setOpen] = useState(false)
+   
 
     const otherLinks = [
         { id: 1, href: "/", name: "Home" },
@@ -13,8 +14,9 @@ const Header = () => {
         { id: 3, href: "#contact", name: "Contact" },
     ];
 
+
     return (
-        <nav className="fixed top-0 bg-transparent w-full flex items-center justify-between p-3 z-10">
+        <nav className={`fixed top-0 left-0 bg-transparent w-full flex items-center justify-between p-2 px-3 z-10`}>
             <Link href="/">
                 <Image
                     alt='nsw logo'
@@ -39,7 +41,7 @@ const Header = () => {
                     <Link
                         href={link.href}
                         key={link.id}
-                        className="inline text-lg text-white px-5 py-3 mx-2 hover:text-yellow-500"
+                        className={`inline text-lg ${scrolled ? "text-blue-600" : "text-white"} px-5 py-3 mx-2 hover:text-yellow-500`}
                     >
                         {link.name}
                     </Link>
