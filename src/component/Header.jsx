@@ -1,12 +1,12 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import Link from "next/link"
 import Image from 'next/image';
 import { Menu } from 'lucide-react';
 import { FaTimes } from 'react-icons/fa';
 
-const Header = ({scrolled}) => {
+const Header = ({ scrolled }) => {
     const [isOpen, setOpen] = useState(false)
-   
+
 
     const otherLinks = [
         { id: 1, href: "/", name: "Home" },
