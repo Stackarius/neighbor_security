@@ -35,6 +35,7 @@ export default function Home() {
         data: { user },
       } = await supabase.auth.getUser();
       setUser(user);
+      
     };
     fetchReportsAndUser();
   }, []);
