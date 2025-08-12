@@ -15,7 +15,7 @@ const Header = () => {
 
     return (
         <nav className="fixed top-0 bg-transparent w-full flex items-center justify-between p-3 z-10">
-            <Link href="/" className="text-white font-semibold text-2xl">
+            <Link href="/">
                 <Image
                     alt='nsw logo'
                     src="/nsw_logo.png"
@@ -26,7 +26,7 @@ const Header = () => {
             </Link>
             {/*  */}
             <button
-                className="sm:hidden relative text-xl outline-none z-40 ransition-all duration-300 ease-in-out overflow-y-visible"
+                className="sm:hidden bg-black p-1 rounded relative text-xl outline-none z-40 ransition-all duration-300 ease-in-out overflow-y-visible"
                 onClick={() => setOpen(!isOpen)}
                 aria-label="Toggle navigation"
             >
