@@ -58,7 +58,7 @@ export default function User() {
                         src={user.avatar_url || `https://res.cloudinary.com/dmucxf1kk/image/upload/v1754767385/cld-sample.jpg`}
                         width={150}
                         height={150}
-                        unoptimized={false}
+                        priority
                         alt="User Avatar"
                         className="rounded-lg my-4 w-[200px] h-[200px] md:w-[400px] md:h-[400px] object-cover shadow"
                     />
