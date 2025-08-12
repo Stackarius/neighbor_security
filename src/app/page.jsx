@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { supabase } from "../lib/supabaseClient";
 import Link from "next/link";
 import { FaClock, FaWpforms } from "react-icons/fa";
@@ -11,6 +11,23 @@ import Header from "@/component/Header";
 
 export default function Home() {
   const [user, setUser] = useState(null);
+  const [scrolled, setScrolled] = useState(false);
+  const heroRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setScrolled(!entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+
+    if (heroRef.current) observer.observe(heroRef.current);
+
+    return () => {
+      if (heroRef.current) observer.unobserve(heroRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchReportsAndUser = async () => {
@@ -19,7 +36,6 @@ export default function Home() {
       } = await supabase.auth.getUser();
       setUser(user);
     };
-
     fetchReportsAndUser();
   }, []);
 
@@ -27,19 +43,20 @@ export default function Home() {
     {
       illustration: <FaClock size={50} className="text-blue-500" />,
       heading: "Fast Reporting",
-      desc: " quickly alert your community about suspicious events.",
+      desc: "Quickly alert your community about suspicious events.",
     },
     {
       illustration: <Verified size={50} className="text-blue-500" />,
       heading: "Verified Alerts",
-      desc: " quickly alert your community about suspicious events.",
+      desc: "Quickly alert your community about suspicious events.",
     },
     {
       illustration: <UserLock size={50} className="text-blue-500" />,
       heading: "Privacy Protected",
-      desc: " quickly alert your community about suspicious events.",
+      desc: "Quickly alert your community about suspicious events.",
     },
   ];
+
   const workCards = [
     {
       illustration: <User size={50} className="text-blue-500" />,
@@ -49,7 +66,7 @@ export default function Home() {
     {
       illustration: <FaWpforms size={50} className="text-blue-500" />,
       heading: "Report Issues",
-      desc: " Use the form to file incidents. Get notified on verified incidents nearby.",
+      desc: "Use the form to file incidents. Get notified on verified incidents nearby.",
     },
     {
       illustration: <LucideUserLock size={50} className="text-blue-500" />,
@@ -62,12 +79,12 @@ export default function Home() {
     <main className="w-full">
       {/* Hero Section */}
       <div
+        ref={heroRef}
         className="relative h-[100vh] bg-cover bg-center bg-fixed"
         style={{ backgroundImage: "url('/hands.jpg')" }}
       >
-        {/*  */}
-        <Header />
-        {/*  */}
+        <Header scrolled={scrolled} />
+
         <div className="absolute text-center inset-0 bg-gradient-to-br from-black-400 to-gray-900 bg-opacity-10 flex flex-col items-center justify-center text-white text-center px-4">
           <motion.section
             initial={{ opacity: 0, y: -30 }}
@@ -88,24 +105,20 @@ export default function Home() {
               area.
             </motion.p>
 
-            <div className="flex flex-wrap items-center justify-center mx-auto gap-3 md:block">
-              <Link href={user ? "/dashboard" : "/login"}>
-                <button className="bg-white text-blue-900 font-semibold px-6 py-2 rounded hover:bg-gray-200 transition-300">
+            <div className="flex flex-col items-center justify-center gap-3 md:flex-row">
+              <Link href={user ? "/dashboard" : "/login"} className="w-full md:w-auto">
+                <button className="bg-white text-blue-900 font-semibold px-6 py-2 rounded hover:bg-gray-200 transition-300 w-full md:w-auto">
                   {user ? "Go to Dashboard" : "Login to Report"}
                 </button>
               </Link>
 
-              <Link
-                href="/#contact"
-                className="bg-yellow-400 w-fit mx-auto hover:bg-yellow-500 text-black px-6 py-2 rounded font-semibold transition md:ml-8"
-              >
-                <button className="font-semibold rounded transition-300">
+              <Link href="/#contact" className="w-full md:w-auto">
+                <button className="bg-yellow-400 hover:bg-yellow-500 text-black px-6 py-2 rounded font-semibold transition-300 w-full md:w-auto">
                   Report an Incident
                 </button>
-                
               </Link>
             </div>
-            
+
           </motion.section>
         </div>
       </div>
@@ -132,7 +145,7 @@ export default function Home() {
               className="shadow-md p-8 rounded w-full bg-gray-100 transiton-all duration-300 ease-in-out"
               whileHover={{ scale: 1.05 }}
             >
-              <div className="flex flex-col items-center" key={i}>
+              <div className="flex flex-col items-center">
                 <span>{card.illustration}</span>
                 <h2 className="font-bold mt-4">{card.heading}</h2>
                 <p className="text-sm/6">{card.desc}</p>
@@ -142,7 +155,7 @@ export default function Home() {
         </div>
       </motion.section>
 
-      {/*  */}
+      {/* How It Works */}
       <motion.section
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
@@ -163,7 +176,7 @@ export default function Home() {
               className="bg-gray-100 shadow-md p-4 py-6 rounded w-full sm:w-1/3"
               whileHover={{ scale: 1.05 }}
             >
-              <div className="flex flex-col items-center" key={i}>
+              <div className="flex flex-col items-center">
                 <span>{card.illustration}</span>
                 <h2 className="font-bold mt-4 ">{card.heading}</h2>
                 <p className="text-sm/6">{card.desc}</p>
@@ -173,15 +186,16 @@ export default function Home() {
         </div>
       </motion.section>
 
-      {/*  */}
-      <motion.section
-        initial={{ opacity: 0, x: -10 }}
-        whileInView={{ opacity: 1, x: 0 }}
+      {/* Contact */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        id="contact" className="px-6"
+        id="contact"
+        className="px-6 mx-auto block w-full"
       >
         <ContactForm />
-      </motion.section>
+      </motion.div>
 
       {/* Footer */}
       <footer className="bg-black text-white py-6 text-center mt-12">
