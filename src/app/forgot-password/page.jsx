@@ -11,7 +11,7 @@ export default function ForgotPasswordPage() {
         e.preventDefault();
 
         try {
-            await sendPasswordReset(email); // no destructuring needed
+            await sendPasswordReset(email); 
             toast.success("Check your email to proceed with reset");
         } catch (err) {
             toast.error(err.message); // catch error thrown from auth.js
