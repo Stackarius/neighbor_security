@@ -11,7 +11,7 @@ export async function POST(req) {
 
     // Configure transporter
     const transporter = nodemailer.createTransport({
-      service: "gmail", // change to your SMTP provider
+      service: "gmail", // change to SMTP provider
       auth: {
         user: process.env.GMAIL_EMAIL,
         pass: process.env.GMAIL_PASS,
