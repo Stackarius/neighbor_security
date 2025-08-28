@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { login } from "../../lib/auth";
+import { login, resetPassword } from "../../lib/auth";
 import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
 import Header from "@/component/Header";
@@ -83,6 +83,11 @@ export default function Login() {
             required
             className="mb-4 border border-gray-400 rounded p-2"
           />
+          {/* Forgot password */}
+          <div>
+            <Link href={"/forgot-password"}>Forgot Password</Link>
+          </div>
+          {/*  */}
           <button
             type="submit"
             className="bg-blue-500 text-white px-4 py-2 mb-2 font-semibold hover:bg-blue-700"
