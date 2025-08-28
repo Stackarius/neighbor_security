@@ -1,9 +1,10 @@
 "use client";
-import { useState } from "react";
+
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
     const router = useRouter();
@@ -12,13 +13,11 @@ export default function ResetPasswordPage() {
 
     async function handleReset(e) {
         e.preventDefault();
-
         const { error } = await supabase.auth.updateUser({ password });
-
         if (error) {
             setMessage(error.message);
         } else {
-            setMessage("Password updated! Redirecting to login...");
+            setMessage("Password updated! Redirecting...");
             setTimeout(() => router.push("/login"), 2000);
         }
     }
@@ -39,7 +38,15 @@ export default function ResetPasswordPage() {
                     Update Password
                 </button>
             </form>
-            {message && <p className="mt-3 text-sm text-gray-700">{message}</p>}
+            {message && <p className="mt-3 text-sm">{message}</p>}
         </div>
+    );
+}
+
+export default function ResetPasswordPage() {
+    return (
+        <Suspense fallback={<p>Loading...</p>}>
+            <ResetPasswordContent />
+        </Suspense>
     );
 }
