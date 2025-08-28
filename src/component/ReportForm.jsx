@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { supabase } from "@/lib/supabaseClient";
 
-export default function ReportForm() {
+export default function   ReportForm() {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -46,55 +46,17 @@ export default function ReportForm() {
     } else {
       toast.success("Report submitted successfully!");
 
-      sendEmail();
-
       setTitle("");
       setDescription("");
       setZone("");
     }
   };
 
-  async function sendEmail() {
-    const { data: users, error: usersError } =
-      await supabase
-        .from("profiles")
-        .select("email")
-        .neq("email", null);
-        
-    if (usersError) {
-      console.error(
-        "Error fetching users:",
-        usersError.message
-      );
-      return;
-    }
-
-    for (const email of users) {
-      const { email: userEmail } = email;
-      if (!userEmail) continue;
-      // Send email notification
-
-      await fetch("/api/send-notification", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from: "NSW Security <onboarding@resend.dev>",
-          to: `${userEmail}`, // array of emails
-          subject: `New report: ${title}`,
-          text: `${description}`,
-          html: `<strong>A new report has been created:</strong> ${description} <br /> Location: ${zone}`,
-        }),
-      });
-    }
-
-   }
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-full md:w-[400px] bg-white p-4 rounded shadow-lg space-y-4"
+      className="w-full bg-white p-4 space-y-4 z-10"
     >
       <h2 className="text-md font-bold md:text-2xl">Submit a Security Report</h2>
       <input
