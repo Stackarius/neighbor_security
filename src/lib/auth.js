@@ -53,12 +53,10 @@ export const getUser = async () => {
 // Forgot password
 export async function sendPasswordReset(email) {
   const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: "https://neighbor-security.vercel.app/reset-password",
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/reset-password`,
   });
 
-  if (error) {
-    console.error(error.message);
-  } else {
-    console.log("Password reset email sent!", data);
-  }
+if (error) throw new Error(error.message);
+  return data; 
 }
+
