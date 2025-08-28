@@ -54,10 +54,11 @@ export default function ReportsPage() {
         className='px-3'
       >
         <h1 className="text-2xl font-bold my-4">Reports Overview</h1>
-        <div className='grid grid-cols-2'>
-          <ReportForm/>
-
+        <div className='grid grid-cols-1 md:grid-cols-2'>
           {/*  */}
+          <ReportForm/>
+          {/*  */}
+          
           <ul className="space-y-4 grid grid-cols-1 items-center md:items-start">
             {reports?.map((report) => (
               <motion.li
@@ -65,9 +66,9 @@ export default function ReportsPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
                 key={report.id}
-                className="bg-white shadow p-4 rounded border-box"
+                className="bg-blue-100 shadow-lg p-4 rounded border-box"
               >
-                <p>{report.title}</p>
+                <h2 className='font-semibold mb-2'>{report.title}</h2>
                 <p>{report.description}</p>
                 <p className="text-sm text-gray-500 mt-1">
                   Posted: {new Date(report.created_at).toLocaleString()}
@@ -76,7 +77,7 @@ export default function ReportsPage() {
                 {report.user_id === user?.id && (
                   <button
                     onClick={() => handleDelete(report.id)}
-                    className="mt-2 text-white font-semibold p-2 px-4 rounded text-sm bg-red-600 ml-auto block"
+                    className="mt-2 text-white font-semibold p-2 px-4 rounded text-sm bg-red-600"
                   >
                     Delete
                   </button>
