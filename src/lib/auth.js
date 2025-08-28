@@ -50,14 +50,15 @@ export const getUser = async () => {
   return user;
 };
 
-// Password reset
-export const resetPassword = async (email) => {
-  const { data, error } = await supabase.auth.resetPasswordForEmail({
-    email
+// Forgot password
+export async function sendPasswordReset(email) {
+  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: "https://neighbor-security.vercel.app/reset-password",
   });
 
   if (error) {
-    toast("Error fetching user data at the moment....");
+    console.error(error.message);
+  } else {
+    console.log("Password reset email sent!", data);
   }
-  return data;
-};
+}
