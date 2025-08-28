@@ -21,7 +21,7 @@ export default function Sidebar() {
       animate={{ opacity: 1, x: 0 }}
       transition={{ease: "anticipate", duration: 0.5 }}
 
-      className="fixed w-60 h-[100vh] bg-gray-900 shadow-md md:shadow-none  text-white p-4 space-y-4 md:block md:relative"
+      className="fixed w-60 h-[100vh] bg-gray-900 shadow-md md:shadow-none z-20 text-white p-4 space-y-4 md:block md:relative"
     >
       <h2 className="text-xl font-bold mb-6">Security Watch</h2>
       <ul className="space-y-2">
