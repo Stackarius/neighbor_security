@@ -93,9 +93,7 @@ export default function ReportForm() {
 
   return (
     <form
-      onSubmit={() => {
-        handleSubmit()
-      }}
+      onSubmit={handleSubmit}
       className="w-full md:w-[400px] bg-white p-4 rounded shadow-lg space-y-4"
     >
       <h2 className="text-md font-bold md:text-2xl">Submit a Security Report</h2>
