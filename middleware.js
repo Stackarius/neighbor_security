@@ -43,7 +43,7 @@ export async function middleware(req) {
   }
 
   // Redirect logged-in users from login/signup
-  if ((pathname === "/login" || pathname === "/signup") && session) {
+  if ((pathname === "/login" || pathname === "/register") && session) {
     // Decide redirect based on role
     const { data: profile } = await supabase
       .from("profiles")
