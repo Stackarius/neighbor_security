@@ -1,6 +1,6 @@
 "use client";
 
-import AdminBar from "@/component/AdminBar";
+import AdminBar from "@/components/AdminBar";
 import { LucideMenu, LucideX } from "lucide-react";
 import { useState } from "react";
 
