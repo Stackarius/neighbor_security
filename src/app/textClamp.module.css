@@ -1,6 +1,6 @@
 .textContainer {
   position: relative;
-  max-width: 88%; /* Adjust as needed */
+  max-width: 89%; /* Adjust as needed */
 }
 
 .truncatedText {
@@ -11,6 +11,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   position: relative;
+  font-size: 14px;
   line-height: 1.5em; /* Adjust based on font size */
   max-height: 4.5em; /* line-height * number of lines */
 }
