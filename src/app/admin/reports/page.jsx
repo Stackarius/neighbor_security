@@ -8,10 +8,10 @@ import { FaTimesCircle } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 
-import DeleteButton from "@/component/DeleteButton";
-import FormattedText from "@/component/FormattedText";
-import ReportForm from "@/component/ReportForm";
-import DeleteConfirmationModal from "@/component/ConfirmModal";
+import DeleteButton from "@/components/DeleteButton";
+import FormattedText from "@/components/FormattedText";
+import ReportForm from "@/components/ReportForm";
+import DeleteConfirmationModal from "@/components/ConfirmModal";
 
 export default function ReportsPage() {
   const [reports, setReports] = useState([]);
@@ -154,7 +154,7 @@ export default function ReportsPage() {
           </div>
 
           {/* Reports list */}
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid lg:grid-cols-2 gap-4">
             {reports.map((r) => (
               <div key={r.id} className="bg-white p-4 shadow rounded">
                 <h2 className="font-semibold">{r.title}</h2>
