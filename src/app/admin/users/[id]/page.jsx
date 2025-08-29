@@ -6,7 +6,7 @@ import { CldImage } from "next-cloudinary";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft } from 'lucide-react';
 import { deleteUser } from '@/app/actions/adminActions';
-import ConfirmModal from "@/component/ConfirmModal";
+import ConfirmModal from "@/components/ConfirmModal";
 import { toast } from 'react-toastify';
 
 export default function User() {
@@ -53,14 +53,14 @@ export default function User() {
             {!user ? (
                 <div>Loading...</div>
             ) : (
-                <div className='grid grid-cols-1 md:grid-cols-2 px-4 md:px-10 items-center'>
+                <div className='grid grid-cols-1 md:grid-cols-2 md:gap-8 px-4 md:px-10 items-center'>
                     <CldImage
-                        src={user.avatar_url || `https://res.cloudinary.com/dmucxf1kk/image/upload/v1754767385/cld-sample.jpg`}
-                        width={150}
-                        height={150}
+                        src={user.img_url || `https://res.cloudinary.com/dmucxf1kk/image/upload/v1754767385/cld-sample.jpg`}
+                        width={100}
+                        height={100}
                         priority
                         alt="User Avatar"
-                        className="rounded-lg my-4 w-[200px] h-[200px] md:w-[400px] md:h-[400px] object-cover shadow"
+                            className="rounded-full my-4 w-70 h-70 object-fit shadow"
                     />
                     <div>
                         <p className="mb-2 md:text-xl"><strong>Name:</strong> {user.full_name}</p>
