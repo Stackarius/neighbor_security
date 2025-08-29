@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect , useState} from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getUser } from "../../lib/auth"; 
+import { getUser } from "../../lib/auth";
 import { supabase } from "../../lib/supabaseClient";
-import ReportForm from "../../component/ReportForm";
-import ReportList from "../../component/ReportList";
+import ReportForm from "../../components/ReportForm";
+import ReportList from "../../components/ReportList";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 
@@ -18,14 +18,16 @@ export default function Dashboard() {
       const user = await getUser();
       if (!user) {
         router.push("/login");
+        return;
       }
       const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user?.id)
+        .from("profiles")
+        .select("*")
+        .eq("id", user?.id)
         .single();
+
       if (error) {
-        toast.error("Error fetching profile:", error);
+        toast.error("Error fetching profile");
         return;
       }
       setProfile(data);
@@ -35,22 +37,49 @@ export default function Dashboard() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       className="min-h-screen"
     >
-      <div className="flex flex-col md:p-6 max-h-screen overflow-y-auto">
-        <h2 className="w-[90%] text-xl md:text-3xl font-bold mt-6 mb-3">
-          Welcome to Your Dashboard
-        </h2>
-        <p className="text-gray-700 w-[90%] text-sm">
-          Here you can monitor reports and manage your profile.
-        </p>
+      <div className="max-w-7xl mx-auto py-8">
+        {/* Header */}
+        <header className="mb-10 mt-10 md:mt-0">
+          <h2 className="text-2xl md:text-2xl font-bold text-gray-900">
+            Welcome back,{" "}
+            <span className="text-blue-600">
+              {profile?.full_name || "User"}
+            </span>
+          </h2>
+          <p className="text-gray-600 mt-2">
+            Monitor reports, track updates, and manage your neighborhood safety
+            — all from your dashboard.
+          </p>
+        </header>
 
-        <div className="flex flex-wrap justify-between gap-4 mt-6 py-4 md:mr-12">
-          <ReportList user={profile} />
-          <ReportForm user={profile} />
+        {/* Dashboard Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Reports List */}
+          <motion.div
+            whileHover={{ scale: 1.01 }}
+            className="lg:col-span-2 md:p-3"
+          >
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
+              Recent Reports
+            </h3>
+            <ReportList user={profile} />
+          </motion.div>
+
+          {/* Report Form */}
+          <motion.div
+            whileHover={{ scale: 1.01 }}
+            className="bg-white shadow-md rounded md:p-3 border border-gray-100"
+          >
+            <h3 className="text-lg text-center font-semibold text-gray-800 my-4">
+              Submit a Report
+            </h3>
+            <ReportForm user={profile} />
+          </motion.div>
         </div>
       </div>
     </motion.div>
