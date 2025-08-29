@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import DeleteButton from "@/components/DeleteButton";
 import { toast } from "react-toastify";
@@ -68,7 +68,20 @@ const AdminDashboard = () => {
   const fetchReports = async () => {
     const { data, error } = await supabase
       .from("reports")
-      .select("*")
+      .select(`
+          id,
+          title,
+          description,
+          created_at,
+          zone,
+          reporter:profiles!user_id (
+            id,
+            full_name,
+            phone,
+            email,
+            img_url
+          )
+        `)
       .order("created_at", { ascending: false })
       .limit(10);
 
@@ -91,6 +104,8 @@ const AdminDashboard = () => {
     toast.success("Report deleted successfully!");
     fetchReports();
   };
+
+  const origin = usePathname()
 
   return (
     <div className="p-3 md:px-12 md:py-6">
@@ -128,6 +143,7 @@ const AdminDashboard = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
+                onClick={() => router.push(`${origin}/reports/${report.id}`)}
                 className="bg-white p-6 rounded shadow hover:shadow-lg transition-shadow duration-200"
               >
                 <div className="flex items-center justify-between">
@@ -135,6 +151,10 @@ const AdminDashboard = () => {
                 </div>
 
                 <FormattedText text={report.description} />
+                <div className="flex flex-col-reverse items-start gap-3 my-4">
+                  {report.reporter.img_url && <img src={report.reporter.img_url} className="w-8 h-8 object-fit rounded-full" />}
+                  <p className="text-sm">Location: {report.zone}</p>
+                </div>
 
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between mt-3">
                   <p className="text-sm text-gray-500">
@@ -145,7 +165,8 @@ const AdminDashboard = () => {
                     {/* Send Button */}
                     <button
                       className="bg-blue-600 text-white px-3 py-1 rounded flex items-center"
-                      onClick={async () => {
+                      onClick={async (e) => {
+                        e.stopPropagation()
                         try {
                           const { data: residents, error: usersError } =
                             await supabase
@@ -192,7 +213,9 @@ const AdminDashboard = () => {
 
                     {/* Delete Button */}
                     <DeleteButton
-                      click={() => {
+                      click={(e) => {
+                        e.stopPropagation()
+
                         setSelectedReport(report);
                         setDeleteOpen(true);
                       }}
