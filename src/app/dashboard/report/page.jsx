@@ -5,87 +5,117 @@ import { supabase } from '../../../lib/supabaseClient';
 import { getUser } from '../../../lib/auth';
 import { toast } from 'react-toastify';
 import React from 'react';
-
 import { motion } from 'framer-motion';
-import ReportForm from '@/component/ReportForm';
+import ReportForm from '@/components/ReportForm';
 
 export default function ReportsPage() {
-    const [reports, setReports] = useState([]);
-    const [user, setUser] = useState(null);
+  const [reports, setReports] = useState([]);
+  const [user, setUser] = useState(null);
+  const [showForm, setShowForm] = useState(false);
 
-    // Fetch user and reports
-    useEffect(() => {
-        const fetchData = async () => {
-            const currentUser = await getUser();
-            setUser(currentUser);
+  // Fetch user and reports
+  const fetchReports = async () => {
+    const currentUser = await getUser();
+    setUser(currentUser);
 
-            const { data, error } = await supabase
-                .from('reports')
-                .select('*')
-                .order('created_at', { ascending: false });
+    const { data, error } = await supabase
+      .from('reports')
+      .select('*')
+      .order('created_at', { ascending: false });
 
-            if (error) {
-                toast.error("Failed to fetch reports");
-                return;
-            }
-            setReports(data);
-        };
-        fetchData();
-    }, []);
+    if (error) {
+      toast.error('Failed to fetch reports');
+      return;
+    }
+    setReports(data);
+  };
 
-    // Handle Report Delete
-    const handleDelete = async (id) => {
-        const { error } = await supabase.from('reports').delete().eq('id', id);
+  useEffect(() => {
+    fetchReports();
+  }, []);
 
-        if (error) {
-            toast.error("Failed to delete");
-            return;
-        }
+  // Handle Report Delete
+  const handleDelete = async (id) => {
+    const { error } = await supabase.from('reports').delete().eq('id', id);
 
-        setReports(reports.filter((r) => r.id !== id));
-        toast.success("Deleted");
-    };
+    if (error) {
+      toast.error('Failed to delete');
+      return;
+    }
 
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className='px-3'
-      >
-        <h1 className="text-2xl font-bold my-4">Reports Overview</h1>
-        <div className='grid grid-cols-1 md:grid-cols-2'>
-          {/*  */}
-          <ReportForm/>
-          {/*  */}
-          
-          <ul className="space-y-4 grid grid-cols-1 items-center md:items-start">
-            {reports?.map((report) => (
-              <motion.li
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                key={report.id}
-                className="bg-blue-100 shadow-lg p-4 rounded border-box"
-              >
-                <h2 className='font-semibold mb-2'>{report.title}</h2>
-                <p>{report.description}</p>
-                <p className="text-sm text-gray-500 mt-1">
-                  Posted: {new Date(report.created_at).toLocaleString()}
-                </p>
+    setReports(reports.filter((r) => r.id !== id));
+    toast.success('Deleted');
+  };
 
-                {report.user_id === user?.id && (
-                  <button
-                    onClick={() => handleDelete(report.id)}
-                    className="mt-2 text-white font-semibold p-2 px-4 rounded text-sm bg-red-600"
-                  >
-                    Delete
-                  </button>
-                )}
-              </motion.li>
-            ))}
-          </ul>
+  // Handle Report Submission
+  const handleReportSubmitted = async () => {
+    setShowForm(false);
+    await fetchReports();
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="px-2 md:px-6 md:py-8 py-6"
+    >
+      <h1 className="text-2xl font-bold my-6 md:mt-0">Reports Overview</h1>
+
+      {/* Add Report Button */}
+      {!showForm && (
+        <button
+          onClick={() => setShowForm(true)}
+          className="mb-6 bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700"
+        >
+          Add Report
+        </button>
+      )}
+
+      {/* Report Form */}
+      {showForm && (
+        <div className="mb-6 bg-white shadow-md p-2 rounded-lg">
+          <ReportForm onSubmitted={handleReportSubmitted} />
+          <button
+            onClick={() => setShowForm(false)}
+            className="mt-3 text-sm text-gray-600 hover:underline"
+          >
+            Close Form
+          </button>
         </div>
-      </motion.div>
-    );
+      )}
+
+      {/* Reports List */}
+      <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
+        {reports?.map((report) => (
+          <motion.div
+            key={report.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="bg-blue-100 shadow-lg p-4 rounded-lg"
+          >
+            <h2 className="font-semibold mb-2">{report.title}</h2>
+            <p>{report.description}</p>
+            <p className="text-sm text-gray-500 mt-1">
+              Posted: {new Date(report.created_at).toLocaleString()}
+            </p>
+
+            {report.user_id === user?.id && (
+              <button
+                onClick={() => handleDelete(report.id)}
+                className="mt-3 text-white font-semibold px-4 py-2 rounded text-sm bg-red-600 hover:bg-red-700"
+              >
+                Delete
+              </button>
+            )}
+          </motion.div>
+        ))}
+
+        {reports.length === 0 && (
+          <p className="text-gray-500 text-center">No reports yet.</p>
+        )}
+      </div>
+    </motion.div>
+  );
 }
