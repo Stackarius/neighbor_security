@@ -1,143 +1,183 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { toast } from "react-toastify";
-import DeleteConfirmationModal from "@/component/ConfirmModal";
-import DeleteButton from "@/component/DeleteButton";
-import { DeleteIcon, LucideMoreVertical, Trash2Icon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import DeleteConfirmationModal from "@/components/ConfirmModal"; // reuse confirm modal
 
 export default function UsersPage() {
     const [users, setUsers] = useState([]);
-    const router = useRouter();
     const [loadingId, setLoadingId] = useState(null);
+    const [confirmOpen, setConfirmOpen] = useState(false);
+    const [pendingUser, setPendingUser] = useState(null);
+    const router = useRouter();
+
+    // fetch users
+    useEffect(() => {
+        fetchUsers();
+    }, []);
 
     const fetchUsers = async () => {
-        const { data: fetchedUsers, error } = await supabase
+        const { data, error } = await supabase
             .from("profiles")
-            .select("*")
-            .order("created_at", { ascending: false });
-
+            .select("id, full_name, email, user_role");
         if (error) {
             console.error("Error fetching users:", error);
-            return;
+        } else {
+            setUsers(data);
         }
-        setUsers(fetchedUsers);
     };
 
-    const handleRowClick = (id) => {
-        setLoadingId(id);
-        setTimeout(() => {
-            router.push(`/admin/users/${id}`);
-        }, 200);
-    };
+    // handle toggle with confirmation
+    const handleAdminToggle = async (userId, currentRole) => {
+        setLoadingId(userId);
 
-    const handleAdminToggle = async (id, currentRole) => {
-        setLoadingId(id);
-
-        const newRole = currentRole === "resident" ? "admin" : "resident";
+        const newRole = currentRole === "admin" ? "user" : "admin";
 
         const { error } = await supabase
             .from("profiles")
             .update({ user_role: newRole })
-            .eq("id", id);
+            .eq("id", userId);
 
         if (error) {
-            console.error(error.message);
-            toast.error("Error updating role");
+            console.error("Error updating role:", error);
         } else {
-            toast.success(`Role updated to ${newRole}`);
             fetchUsers();
         }
 
         setLoadingId(null);
     };
 
-    useEffect(() => {
-        fetchUsers();
-    }, []);
+    const openConfirm = (user) => {
+        setPendingUser(user);
+        setConfirmOpen(true);
+    };
+
+    const confirmRoleChange = () => {
+        if (pendingUser) {
+            handleAdminToggle(pendingUser.id, pendingUser.user_role);
+        }
+        setConfirmOpen(false);
+        setPendingUser(null);
+    };
 
     return (
         <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">All Users</h2>
+            <h1 className="text-xl font-bold mb-4">All Users</h1>
 
             {/* Desktop Table */}
-            <table className="hidden md:table w-full border-collapse" border={1}>
-                <thead>
-                    <tr>
-                        <th className="text-left p-2">S/N</th>
-                        <th className="text-left p-2">Name</th>
-                        <th className="text-left p-2">Phone</th>
-                        <th className="text-left p-2">Email</th>
-                        <th className="text-left p-2">Address</th>
-                        <th className="text-left p-2">Role</th>
-                        <th className="text-left p-2">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {users.map((user, index) => (
-                        <tr
-                            key={user.id}
-                            className={`cursor-pointer transition-all duration-200 hover:bg-blue-50 ${loadingId === user.id ? "opacity-50" : ""
-                                }`}
-                            onClick={() => handleRowClick(user.id)}
-                        >
-                            <td className="p-2">{index + 1}</td>
-                            <td className="p-2">{user.full_name}</td>
-                            <td className="p-2">{user.phone}</td>
-                            <td className="p-2">{user.email}</td>
-                            <td className="p-2">{user.address}</td>
-                            <td className="p-2">{user.user_role}</td>
-                            <td className="p-2">
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleAdminToggle(user.id, user.user_role);
-                                    }}
-                                    className={`px-3 py-1 rounded text-white transition-transform duration-200 w-fit ${user.user_role === "admin"
-                                            ? "bg-red-500 hover:bg-red-600"
-                                            : "bg-green-500 hover:bg-green-600"
-                                        } ${loadingId === user.id ? "animate-pulse" : ""}`}
-                                >
-                                    {user.user_role === "admin" ? "Remove Admin" : "Make Admin"}
-                                </button>
-                            
-                            </td>
+            <div className="hidden md:block overflow-x-auto">
+                <table className="w-full border border-gray-300 rounded-lg">
+                    <thead className="bg-gray-100">
+                        <tr>
+                            <th className="p-2 text-left">Name</th>
+                            <th className="p-2 text-left">Email</th>
+                            <th className="p-2 text-left">Role</th>
+                            <th className="p-2 text-left">Actions</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {users.map((user) => (
+                            <tr
+                                key={user.id}
+                                className={`border-t hover:bg-gray-50 transition ${loadingId === user.id ? "opacity-50" : ""
+                                    }`}
+                            >
+                                <td
+                                    className="p-2 cursor-pointer"
+                                    onClick={() => router.push(`/admin/users/${user.id}`)}
+                                >
+                                    {user.full_name}
+                                </td>
+                                <td className="p-2">{user.email}</td>
+                                <td className="p-2">
+                                    <span
+                                        className={`px-2 py-1 text-xs rounded ${user.user_role === "admin"
+                                                ? "bg-blue-100 text-blue-700"
+                                                : "bg-gray-200 text-gray-600"
+                                            }`}
+                                    >
+                                        {user.user_role}
+                                    </span>
+                                </td>
+                                <td className="p-2">
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            openConfirm(user);
+                                        }}
+                                        className={`px-3 py-1 rounded text-white w-fit transition ${user.user_role === "admin"
+                                                ? "bg-red-500 hover:bg-red-600"
+                                                : "bg-green-500 hover:bg-green-600"
+                                            }`}
+                                        disabled={loadingId === user.id}
+                                    >
+                                        {loadingId === user.id
+                                            ? "Updating..."
+                                            : user.user_role === "admin"
+                                                ? "Remove Admin"
+                                                : "Make Admin"}
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
 
             {/* Mobile Cards */}
-            <div className="grid gap-4 md:hidden">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:hidden">
                 {users.map((user) => (
                     <div
                         key={user.id}
-                        className={`p-4 border rounded-lg shadow-sm transition-all duration-300 transform hover:scale-[1.02] ${loadingId === user.id ? "opacity-50 translate-x-2" : "opacity-100"
+                        onClick={() => router.push(`/admin/users/${user.id}`)}
+                        className={`p-4 border rounded-lg shadow-sm cursor-pointer transition hover:shadow-md ${loadingId === user.id ? "opacity-50" : ""
                             }`}
-                        onClick={() => handleRowClick(user.id)}
                     >
-                        <p className="font-bold">{user.full_name}</p>
-                        <p className="text-sm text-gray-500">{user.email}</p>
-                        <p className="mt-2">
-                            Role: <span className="font-medium">{user.user_role}</span>
+                        <h2 className="font-semibold">{user.full_name}</h2>
+                        <p className="text-gray-600">{user.matric_number}</p>
+                        <p className="mt-1">
+                            <span
+                                className={`px-2 py-1 text-xs rounded ${user.user_role === "admin"
+                                        ? "bg-blue-100 text-blue-700"
+                                        : "bg-gray-200 text-gray-600"
+                                    }`}
+                            >
+                                {user.user_role}
+                            </span>
                         </p>
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
-                                handleAdminToggle(user.id, user.user_role);
+                                openConfirm(user);
                             }}
-                            className={`mt-3 px-3 py-1 rounded text-white transition-transform duration-200 ${user.user_role === "admin"
+                            className={`mt-3 px-3 py-1 rounded text-white transition ${user.user_role === "admin"
                                     ? "bg-red-500 hover:bg-red-600"
                                     : "bg-green-500 hover:bg-green-600"
-                                } ${loadingId === user.id ? "animate-pulse" : ""}`}
+                                }`}
+                            disabled={loadingId === user.id}
                         >
-                            {user.user_role === "admin" ? "Remove Admin" : "Make Admin"}
+                            {loadingId === user.id
+                                ? "Updating..."
+                                : user.user_role === "admin"
+                                    ? "Remove Admin"
+                                    : "Make Admin"}
                         </button>
                     </div>
                 ))}
             </div>
+
+            {/* Confirmation Modal */}
+            <DeleteConfirmationModal
+                isOpen={confirmOpen}
+                onClose={() => setConfirmOpen(false)}
+                onConfirm={confirmRoleChange}
+                title="Change Role"
+                description={`Are you sure you want to ${pendingUser?.user_role === "admin"
+                        ? "remove Admin rights"
+                        : "make this user an Admin"
+                    }?`}
+            />
         </div>
     );
 }
