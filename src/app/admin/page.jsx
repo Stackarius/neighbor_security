@@ -9,7 +9,6 @@ import { toast } from "react-toastify";
 import { File, LayoutDashboard, Send } from "lucide-react";
 import FormattedText from "@/components/FormattedText";
 import ConfirmModal from "@/components/ConfirmModal";
-import { exportToPDF } from "@/utils/exportPDF";
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
