@@ -1,24 +1,71 @@
+import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextResponse } from "next/server";
 
-const protectedRoutes = ["/dashboard", "/admin", "/reports"];
+export async function middleware(req) {
+  const res = NextResponse.next();
+  const supabase = createMiddlewareClient({ req, res });
 
-export function middleware(request) {
-  const { pathname } = request.nextUrl;
-  const isProtected = protectedRoutes.some((route) =>
-    pathname.startsWith(route)
-  );
+  // Get the current session
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  // Get user from cookies/session
-  const token = request.cookies.get("sb-access-token")?.value;
+  const pathname = req.nextUrl.pathname;
 
-  if (isProtected && !token) {
-    const loginUrl = new URL("/login", request.url);
-    return NextResponse.redirect(loginUrl);
+  // Protected routes for any logged-in user
+  const protectedRoutes = ["/dashboard", "/reports"];
+
+  // Admin-only routes
+  const adminRoutes = ["/admin"];
+
+  // If route requires login but no session, redirect to login
+  if (protectedRoutes.some((route) => pathname.startsWith(route)) && !session) {
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  return NextResponse.next();
+  // If admin route, check role from profiles table
+  if (adminRoutes.some((route) => pathname.startsWith(route))) {
+    if (!session) {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
+
+    // Fetch the user’s profile to get the role
+    const { data: profile, error } = await supabase
+      .from("profiles")
+      .select("user_role")
+      .eq("id", session.user.id)
+      .single();
+
+    if (error || profile?.user_role !== "admin") {
+      // Redirect non-admins away
+      return NextResponse.redirect(new URL("/dashboard", req.url));
+    }
+  }
+
+  // Redirect logged-in users from login/signup
+  if ((pathname === "/login" || pathname === "/signup") && session) {
+    // Decide redirect based on role
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("user_role")
+      .eq("id", session.user.id)
+      .single();
+
+    const redirectUrl =
+      profile?.user_role === "admin" ? "/admin" : "/dashboard";
+
+    return NextResponse.redirect(new URL(redirectUrl, req.url));
+  }
+
+  return res;
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/admin/:path*", "/reports/:path*"],
+  matcher: [
+    "/dashboard/:path*",
+    "/reports/:path*",
+    "/admin/:path*",
+    "/login",
+    "/signup",
+  ],
 };
