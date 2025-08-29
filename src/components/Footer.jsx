@@ -8,7 +8,7 @@ const Footer = () => {
             <div className="container mx-auto px-6 grid gap-8 md:grid-cols-3">
                 {/* Brand */}
                 <div>
-                    <h2 className="text-2xl font-bold text-white">SafeNeighborhood</h2>
+                    <h2 className="text-2xl font-bold text-white">NSW Security</h2>
                     <p className="mt-3 text-gray-400">
                         Building safer communities together through quick reporting and real-time alerts.
                     </p>
@@ -39,7 +39,7 @@ const Footer = () => {
             </div>
 
             <div className="border-t border-gray-700 mt-10 pt-5 text-center text-gray-500 text-sm">
-                © {new Date().getFullYear()} SafeNeighborhood. All rights reserved.
+                © {new Date().getFullYear()} NSW Security. All rights reserved.
             </div>
         </footer>
     );
