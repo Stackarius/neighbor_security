@@ -12,6 +12,8 @@ import DeleteButton from "@/components/DeleteButton";
 import FormattedText from "@/components/FormattedText";
 import ReportForm from "@/components/ReportForm";
 import DeleteConfirmationModal from "@/components/ConfirmModal";
+import { usePathname, useRouter } from "next/navigation";
+import { Router } from "next/router";
 
 export default function ReportsPage() {
   const [reports, setReports] = useState([]);
@@ -19,6 +21,8 @@ export default function ReportsPage() {
   const [showForm, setShowForm] = useState(false);
   const [isDeleteOpen, setDeleteOpen] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
+
+  const router = useRouter()
 
   const supabase = createClientComponentClient();
 
@@ -127,6 +131,8 @@ export default function ReportsPage() {
     }
   };
 
+  const origin = usePathname()
+
   return (
     <div className="p-6 relative">
       <h1 className="text-xl font-semibold mb-2">Manage Reports</h1>
@@ -156,20 +162,27 @@ export default function ReportsPage() {
           {/* Reports list */}
           <div className="grid lg:grid-cols-2 gap-4">
             {reports.map((r) => (
-              <div key={r.id} className="bg-white p-4 shadow rounded">
+              <div key={r.id}
+                className="bg-white p-4 shadow rounded"
+                onClick={() => router.push(`${origin}/${r.id}`)}
+              >
                 <h2 className="font-semibold">{r.title}</h2>
                 <FormattedText text={r.description} />
                 <p>{new Date(r.created_at).toLocaleDateString()}</p>
 
                 <div className="flex items-center justify-end mt-2">
                   <button
-                    onClick={() => handleSendReport(r)}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleSendReport(r)
+                    } }
                     className="bg-blue-600 p-1 px-2 rounded mr-3 text-white"
                   >
                     <Send className="inline mr-1" /> Send
                   </button>
                   <DeleteButton
-                    click={() => {
+                    click={(e) => {
+                      e.stopPropagation()
                       setSelectedReport(r.id);
                       setDeleteOpen(true);
                     }}
