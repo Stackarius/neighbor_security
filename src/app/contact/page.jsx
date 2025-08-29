@@ -37,7 +37,7 @@ export default function ContactUs() {
 
             {/* Header */}
             <div className="text-center py-12 px-6">
-                <h1 className="text-4xl font-bold mb-2 mt-8">Contact Us</h1>
+                <h1 className="text-4xl font-bold mb-2 mt-8 md:mt-20">Contact Us</h1>
                 <p className="text-gray-500 max-w-2xl mx-auto">
                     Have questions, feedback, or just want to say hello? Use the form below, reach out via our contact info, or learn more about the developer.
                 </p>

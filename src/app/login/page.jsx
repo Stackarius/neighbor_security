@@ -9,6 +9,7 @@ import { supabase } from "@/lib/supabaseClient";
 import Header from "@/components/Header";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import Footer from "@/components/Footer";
 
 export default function Login() {
   const router = useRouter();
@@ -51,7 +52,7 @@ export default function Login() {
       {/* Header */}
       <Header />
 
-      <div className="flex flex-1 flex-col md:flex-row items-center justify-center px-4 md:px-16 py-12 gap-12">
+      <div className="mt-10 md:mt-20 flex flex-1 flex-col md:flex-row items-center justify-center px-4 md:px-16 py-12 gap-12">
         {/* Login Form */}
         <div className="w-full max-w-md">
           <form
@@ -127,6 +128,7 @@ export default function Login() {
         animate={{ rotate: 360 }}
         transition={{ repeat: Infinity, duration: 120, ease: "linear" }}
       />
+      <Footer />
     </div>
   );
 }
