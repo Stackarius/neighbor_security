@@ -1,4 +1,5 @@
 "use client"
+import Link from "next/link";
 import React from "react";
 
 const CTA = () => {
@@ -13,12 +14,12 @@ const CTA = () => {
                     and protecting what matters most.
                 </p>
                 <div className="mt-8">
-                    <a
-                        href="/signup"
+                    <Link
+                        href="/register"
                         className="inline-block px-8 py-4 bg-white text-yellow-600 font-semibold rounded-full shadow-lg hover:bg-gray-100 transition"
                     >
                         Get Started
-                    </a>
+                    </Link>
                 </div>
             </div>
         </section>
