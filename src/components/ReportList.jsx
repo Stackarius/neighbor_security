@@ -3,10 +3,12 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 import { toast } from "react-toastify";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function ReportList({ user }) {
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter()
 
   useEffect(() => {
     const fetchReports = async () => {
@@ -14,7 +16,7 @@ export default function ReportList({ user }) {
 
       const { data, error } = await supabase
         .from("reports")
-        .select("*")
+        .select(`*`)
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -29,6 +31,8 @@ export default function ReportList({ user }) {
     fetchReports();
   }, []);
 
+  const origin = usePathname()
+
   if (loading) return <p className="text-center text-gray-500">Loading reports...</p>;
 
   return (
@@ -36,11 +40,12 @@ export default function ReportList({ user }) {
       {reports.length === 0 ? (
         <p className="text-gray-500 text-center">No reports found.</p>
       ) : (
-        <ul className="grid gap-4 md:grid-cols-2 w-full">
+        <ul className="grid gap-4 w-full">
           {reports.map((report) => (
             <li
+              onClick={ () => router.push(`${origin}/report/${report.id}`)}
               key={report.id}
-              className="bg-white p-4 rounded-2xl shadow hover:shadow-lg transition-shadow"
+              className="bg-white p-4 rounded-2xl shadow cursor-pointer hover:shadow-lg transition-shadow"
             >
               <h3 className="text-lg font-semibold text-blue-700 mb-2">
                 {report.title}
