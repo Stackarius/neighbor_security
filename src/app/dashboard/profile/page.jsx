@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { CldUploadWidget } from "next-cloudinary";
+import { toast } from "react-toastify";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState({
@@ -12,9 +13,10 @@ export default function ProfilePage() {
     img_url: "",
   });
   const [loading, setLoading] = useState(false);
-  const [isNew, setIsNew] = useState(false); // track if profile exists
+  const [isNew, setIsNew] = useState(false);
+  const [userId, setUserId] = useState(null);
 
-  // Fetch current user profile
+  // Fetch current user + profile
   useEffect(() => {
     const fetchProfile = async () => {
       const {
@@ -23,17 +25,18 @@ export default function ProfilePage() {
 
       if (!user) return;
 
-      let { data, error } = await supabase
+      setUserId(user.id);
+
+      const { data, error } = await supabase
         .from("profiles")
         .select("full_name, email, phone, img_url")
         .eq("id", user.id)
         .single();
 
-      if (!error && data) {
+      if (data && !error) {
         setProfile(data);
         setIsNew(false);
       } else {
-        // no profile row yet
         setIsNew(true);
       }
     };
@@ -43,118 +46,78 @@ export default function ProfilePage() {
 
   // Handle form changes
   const handleChange = (e) => {
-    setProfile({ ...profile, [e.target.name]: e.target.value });
+    setProfile((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  // Save profile to Supabase
+  // Save profile
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!userId) return toast.error("No user logged in");
+
     setLoading(true);
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      alert("No user logged in");
-      setLoading(false);
-      return;
-    }
-
     let error;
 
     if (isNew) {
-      // Insert a new row for first-time users
       const { error: insertError } = await supabase.from("profiles").insert({
-        id: user.id,
+        id: userId,
         ...profile,
       });
       error = insertError;
       if (!error) setIsNew(false);
     } else {
-      // Fetch current row to preserve existing values
-      const { data: currentData } = await supabase
-        .from("profiles")
-        .select("full_name, email, phone, img_url")
-        .eq("id", user.id)
-        .single();
-
-      // Merge only non-empty values
-      const updates = { ...currentData };
-      Object.keys(profile).forEach((key) => {
-        if (profile[key] && profile[key].trim() !== "") {
-          updates[key] = profile[key];
-        }
-      });
-
       const { error: updateError } = await supabase
         .from("profiles")
-        .update(updates)
-        .eq("id", user.id);
+        .update(profile)
+        .eq("id", userId);
       error = updateError;
     }
 
     setLoading(false);
 
     if (error) {
-      alert("Error saving profile: " + error.message);
+      toast.error("Error saving profile: " + error.message);
     } else {
-      alert("Profile saved successfully!");
+      toast.success("Profile saved successfully!");
     }
   };
 
   return (
-    <div className="max-w-lg mx-auto p-6 bg-white shadow-lg rounded-lg mt-8">
-      <h2 className="text-xl font-semibold mb-4">Update Profile</h2>
+    <div className="max-w-lg mx-auto p-4 md:p-6 bg-white mt-8">
+      <h2 className="text-xl font-bold mb-6 text-gray-800">Update Profile</h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Profile Photo Upload */}
-
-        <div>
-          <label className="block mb-1 text-sm font-medium">Profile Photo</label>
-          {profile.img_url && (
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Profile Photo */}
+        <div className="text-center bg-gray-100 py-3 md:py-6 rounded">
+          {profile.img_url ? (
             <img
               src={profile.img_url}
-              alt={profile.full_name}
-              className="w-40 h-40 mx-auto rounded-full object-cover mb-2"
+              alt={profile.full_name || "Profile"}
+              className="w-28 h-28 mx-auto rounded-full object-cover mb-3 border shadow"
             />
+          ) : (
+            <div className="w-28 h-28 mx-auto rounded-full bg-gray-200 flex items-center justify-center text-gray-500 mb-3">
+              No Photo
+            </div>
           )}
 
           <CldUploadWidget
             uploadPreset="profile_pics"
             onSuccess={(result, { widget }) => {
               if (result.event === "success") {
-                setProfile({ ...profile, img_url: result.info.secure_url });
+                setProfile((prev) => ({ ...prev, img_url: result.info.secure_url }));
                 widget.close();
               }
             }}
           >
-            {(props) => {
-              if (!props?.open) {
-                console.warn(
-                  "Cloudinary upload widget not available. Check config."
-                );
-                return (
-                  <button
-                    type="button"
-                    disabled
-                    className="px-4 py-2 bg-gray-400 text-white rounded cursor-not-allowed"
-                  >
-                    Upload Not Available
-                  </button>
-                );
-              }
-
-              return (
-                <button
-                  type="button"
-                  onClick={() => props.open()}
-                  className="px-4 py-2 mx-auto block bg-blue-600 text-white rounded"
-                >
-                  Upload Photo
-                </button>
-              );
-            }}
+            {({ open }) => (
+              <button
+                type="button"
+                onClick={() => open()}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              >
+                Upload Photo
+              </button>
+            )}
           </CldUploadWidget>
         </div>
 
@@ -166,7 +129,7 @@ export default function ProfilePage() {
             name="full_name"
             value={profile.full_name}
             onChange={handleChange}
-            className="w-full border rounded p-2"
+            className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -178,7 +141,7 @@ export default function ProfilePage() {
             name="email"
             value={profile.email}
             onChange={handleChange}
-            className="w-full border rounded p-2"
+            className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -190,17 +153,15 @@ export default function ProfilePage() {
             name="phone"
             value={profile.phone}
             onChange={handleChange}
-            className="w-full border rounded p-2"
+            className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
           />
         </div>
-
-       
 
         {/* Submit */}
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-green-600 text-white p-2 rounded"
+          className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
         >
           {loading ? "Saving..." : isNew ? "Create Profile" : "Save Profile"}
         </button>
