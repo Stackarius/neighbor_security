@@ -7,8 +7,15 @@ import { toast } from 'react-toastify';
 import React from 'react';
 import { motion } from 'framer-motion';
 import ReportForm from '@/components/ReportForm';
+import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
+
 
 export default function ReportsPage() {
+  const origin = usePathname()
+
+  const router = useRouter()
+
   const [reports, setReports] = useState([]);
   const [user, setUser] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -93,7 +100,8 @@ export default function ReportsPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="bg-blue-100 shadow-lg p-4 rounded-lg"
+            className="bg-blue-100 shadow-lg p-4 rounded-lg cursor-pointer hover:shadow-xl transition"
+            onClick={() => router.push(`${origin}/${report.id}`)}
           >
             <h2 className="font-semibold mb-2">{report.title}</h2>
             <p>{report.description}</p>
@@ -103,7 +111,10 @@ export default function ReportsPage() {
 
             {report.user_id === user?.id && (
               <button
-                onClick={() => handleDelete(report.id)}
+                onClick={(e) => {
+                  e.stopPropagation(); // prevent navigating when deleting
+                  handleDelete(report.id);
+                }}
                 className="mt-3 text-white font-semibold px-4 py-2 rounded text-sm bg-red-600 hover:bg-red-700"
               >
                 Delete
