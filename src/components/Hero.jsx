@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -49,7 +50,7 @@ const Hero = () => {
     }
 
     return (
-        <section className="relative mt-0 bg-gradient-to-br from-blue-900 via-black to-gray-900 text-white pt-28 md:pt-40 pb-18">
+        <section className="relative mt-0 bg-gradient-to-br from-blue-900 via-black to-gray-900 text-white pt-28 md:pt-40 pb-18 overflow-hidden">
             <div className="container mx-auto px-6 flex flex-col-reverse md:flex-row items-center gap-12">
 
                 {/* Left Content */}
@@ -80,19 +81,27 @@ const Hero = () => {
 
                 {/* Right Image / Illustration */}
                 <div className="flex-1 flex justify-center relative">
-                    <div className="relative w-72 h-72 md:w-96 md:h-96">
+                    <motion.div
+                        className="relative w-72 h-72 md:w-96 md:h-96 mb-8 md:mb-0"
+                        animate={{ y: [0, -15, 0] }}
+                        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                    >
                         <Image
                             src="/security_illustration.png"
-                            alt="Neighborhood Security Illustration"
+                            alt="Illustration"
                             fill
-                            className="object-contain drop-shadow-lg animate-bounce-slow"
+                            className="object-contain drop-shadow-xl"
                         />
-                    </div>
+                    </motion.div>
                 </div>
             </div>
 
             {/* Subtle background effect */}
-            <div className="absolute inset-0 bg-[url('/grid.jpg')] bg-contain no-repeat opacity-10 pointer-events-none"></div>
+            <motion.div
+                className="absolute inset-0 bg-[url('/grid.jpg')] bg-contain no-repeat opacity-10 pointer-events-none"
+                animate={{ rotate: 360 }}
+                transition={{ repeat: Infinity, duration: 120, ease: "linear" }}
+            />
         </section>
     );
 };
