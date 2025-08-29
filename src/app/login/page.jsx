@@ -3,127 +3,130 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { login, resetPassword } from "../../lib/auth";
+import { login } from "../../lib/auth";
 import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
 import Header from "@/components/Header";
+import Image from "next/image";
+import { motion } from "framer-motion";
 
 export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
-    
     e.preventDefault();
-
     try {
-      setLoading(true)
+      setLoading(true);
       const user = await login(email, password);
 
-      // Get user profile to check role
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("user_role")
         .eq("id", user.id)
         .single();
-      
+
       if (profileError || !profile) {
         toast.error("Error fetching user profile.");
         setLoading(false);
         return;
       }
-      
-      // user == admin => "/admin" : "/dashboard"
-      if (profile && profile.user_role == "admin") {
-        setLoading(false)
+
+      if (profile.user_role === "admin") {
         router.push("/admin");
       } else {
-        setLoading(false)
         router.push("/dashboard");
       }
     } catch (err) {
-      setLoading(false);
       toast.error("Login failed: " + err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div
-      className="absolute flex items-center justify-center w-full h-[100vh] bg-cover bg-center"
-      style={{ backgroundImage: "url('/hands.jpg')" }}
-    >
-      <div className="absolute top-0 left-0 w-full">
-      <Header/>
-      </div>
+    <div className="relative w-full min-h-screen bg-[#0B0F34] flex flex-col overflow-hidden">
+      {/* Header */}
+      <Header />
 
-      <div className="flex flex-col items-center m-auto justify-center p-4 w-[500px] max-w-md">
-        <form
-          onSubmit={handleLogin}
-          className="flex flex-col gap-2 bg-transparent backdrop-blur-lg bg-white/40 text-white p-4 rounded shadow-md w-full"
-        >
-          <h2 className="text-2xl font-bold text-center my-3">Login</h2>
-          <p className="text-sm text-white mb-1 font-semibold">Email</p>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="mb-2 border border-gray-400 rounded p-2"
-          />
-          <p className="text-sm text-white mb-1 font-semibold">Password</p>
-
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="mb-4 border border-gray-400 rounded p-2"
-          />
-          {/* Forgot password */}
-          <div>
-            <Link href={"/forgot-password"}>Forgot Password</Link>
-          </div>
-          {/*  */}
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 mb-2 font-semibold hover:bg-blue-700"
+      <div className="flex flex-1 flex-col md:flex-row items-center justify-center px-4 md:px-16 py-12 gap-12">
+        {/* Login Form */}
+        <div className="w-full max-w-md">
+          <form
+            onSubmit={handleLogin}
+            className="flex flex-col mt-10 md:mt-0 gap-4 bg-black/60 backdrop-blur-md p-8 rounded-2xl shadow-xl text-white"
           >
-            {loading && (
-              <svg
-                className="animate-spin h-5 w-5 text-white inline mr-2"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8v8z"
-                />
-              </svg>
-            )}
-            {loading ? "Please wait..." : "Login"}
-          </button>
-        </form>
-        <div className="flex justify-between p-2 text-white">
-          <p className="mr-auto ">Don&apos;t have an account? </p>
-          <Link href="/register" className="ml-5 font-semibold">
-            Register
-          </Link>
+            <h2 className="text-3xl font-bold text-center mb-6">Login</h2>
+
+            <div className="flex flex-col">
+              <label className="font-medium mb-1">Email</label>
+              <input
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="p-3 rounded-lg border border-gray-600 bg-black/30 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <label className="font-medium mb-1">Password</label>
+              <input
+                type="password"
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="p-3 rounded-lg border border-gray-600 bg-black/30 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-white"
+              />
+            </div>
+
+            <Link href="/forgot-password" className="text-yellow-400 hover:underline mb-2">
+              Forgot Password?
+            </Link>
+
+            <button
+              type="submit"
+              className="bg-yellow-500 hover:bg-yellow-600 text-black py-3 rounded-lg font-semibold transition-all duration-200"
+            >
+              {loading ? "Please wait..." : "Login"}
+            </button>
+
+            <p className="text-center text-white/70 mt-2">
+              Don't have an account?{" "}
+              <Link href="/register" className="text-yellow-400 font-semibold hover:underline">
+                Register
+              </Link>
+            </p>
+          </form>
+        </div>
+
+        {/* Right Side Image */}
+        <div className="hidden md:flex flex-1 justify-center items-center">
+          <motion.div
+            className="relative w-72 h-72 md:w-96 md:h-96 mb-8 md:mb-0"
+            animate={{ y: [0, -15, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <Image
+              src="/security_illustration.png"
+              alt="Illustration"
+              fill
+              className="object-contain drop-shadow-xl"
+            />
+          </motion.div>
         </div>
       </div>
+
+      {/* Rotating Background Grid */}
+      <motion.div
+        className="absolute inset-0 bg-[url('/grid.jpg')] bg-cover no-repeat opacity-10 pointer-events-none"
+        animate={{ rotate: 360 }}
+        transition={{ repeat: Infinity, duration: 120, ease: "linear" }}
+      />
     </div>
   );
 }
