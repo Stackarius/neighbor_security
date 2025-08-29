@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { register } from "../../lib/auth";
-import Header from "@/component/Header";
+import Header from "@/components/Header";
 
 export default function Register() {
 

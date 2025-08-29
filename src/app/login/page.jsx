@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { login, resetPassword } from "../../lib/auth";
 import Link from "next/link";
 import { supabase } from "@/lib/supabaseClient";
-import Header from "@/component/Header";
+import Header from "@/components/Header";
 
 export default function Login() {
   const router = useRouter();
