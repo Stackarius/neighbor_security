@@ -48,7 +48,7 @@ const Header = () => {
                         </Link>
                     ))}
                     <Link
-                        href="/report"
+                        href="/login"
                         className="bg-yellow-500 hover:bg-yellow-600 text-black px-5 py-2 rounded-lg font-semibold transition"
                     >
                         Report Now
@@ -72,7 +72,7 @@ const Header = () => {
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: "100%" }}
                         transition={{ duration: 0.3, ease: "easeInOut" }}
-                        className="md:hidden fixed inset-0 bg-black/95 flex flex-col items-center justify-center gap-6 text-lg font-medium z-50"
+                        className="md:hidden fixed top-0 inset-0 bg-black/95 flex flex-col items-center justify-center gap-6 text-lg font-medium z-50"
                     >
                         {navLinks.map((link) => (
                             <Link
@@ -85,7 +85,7 @@ const Header = () => {
                             </Link>
                         ))}
                         <Link
-                            href="/report"
+                            href="/login"
                             className="bg-yellow-500 hover:bg-yellow-600 text-black px-5 py-2 rounded-lg font-semibold transition"
                             onClick={() => setIsOpen(false)}
                         >
