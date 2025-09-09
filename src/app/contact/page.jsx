@@ -101,9 +101,9 @@ export default function ContactUs() {
                     </p>
 
                     <div className="space-y-3">
-                        <p><span className="font-semibold">Email:</span> support@example.com</p>
+                        <p><span className="font-semibold">Email:</span> support@nswsecurity.com</p>
                         <p><span className="font-semibold">Phone:</span> +234 123 456 7890</p>
-                        <p><span className="font-semibold">Address:</span> 123 Main Street, Lagos, Nigeria</p>
+                        <p><span className="font-semibold">Address:</span> The Federal Polytechnic Ede, Ede, Osun</p>
                     </div>
 
                     {/* Social Media Links */}
