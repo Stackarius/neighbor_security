@@ -10,28 +10,21 @@ import { motion } from "framer-motion";
 export default function AboutUs() {
     const team = [
         {
-            name: "Alice Johnson",
-            role: "Co-Owner & CEO",
+            name: "Adeniran Saheed Abiodun",
+            matric: "CS20230103917",
+            department: "Computer Science",
             bio: "Visionary leader driving the project's strategic direction and growth.",
-            img: "/female.jpg",
+            img: "/male.jpg",
             twitter: "https://twitter.com/",
             linkedin: "https://linkedin.com/",
             github: "#",
         },
         {
-            name: "Bob Smith",
-            role: "Co-Owner & COO",
-            bio: "Oversees operations and ensures smooth day-to-day management.",
-            img: "/female.jpg",
-            twitter: "#",
-            linkedin: "#",
-            github: "#",
-        },
-        {
-            name: "Carol Lee",
-            role: "Co-Owner & CFO",
+            name: "Obabiolorun Bisola Janet",
+            matric: "CS20230107198",
+            department: "Computer Science",
             bio: "Manages finances and helps maintain sustainable growth.",
-            img: "/male.jpg",
+            img: "/female.jpg",
             twitter: "#",
             linkedin: "#",
             github: "#",
@@ -40,7 +33,7 @@ export default function AboutUs() {
             name: "Stackr",
             role: "Developer",
             bio: "Builds and maintains the project’s applications, ensuring smooth user experience.",
-            img: "/default-avatar.png",
+            img: "/male.jpg",
             twitter: "https://twitter.com/",
             linkedin: "https://linkedin.com/",
             github: "https://github.com/",
@@ -129,8 +122,8 @@ export default function AboutUs() {
                 whileInView="show"
                 viewport={{ once: true, amount: 0.2 }}
             >
-                <h2 className="text-3xl font-bold text-indigo-700 text-center mb-8 border-b-2 border-indigo-200 inline-block pb-2">Meet Our Team</h2>
-                <div className="max-w-6xl mx-auto grid sm:grid-cols-2 md:grid-cols-4 gap-8">
+                <h2 className="text-3xl font-bold text-indigo-700 text-center mx-auto mb-8 border-b-2 border-indigo-200 block pb-2">Meet Our Team</h2>
+                <div className="max-w-6xl mx-auto items-center grid sm:grid-cols-2 md:grid-cols-3 gap-8">
                     {team.map((member, idx) => (
                         <motion.div key={idx} variants={fadeUpVariant} className="bg-white shadow-lg rounded-lg p-6 text-center hover:scale-105 transition-transform relative group overflow-hidden">
                             <img
@@ -139,7 +132,8 @@ export default function AboutUs() {
                                 className="w-32 h-32 rounded-full object-cover mx-auto mb-4"
                             />
                             <h3 className="text-xl font-semibold mb-1">{member.name}</h3>
-                            <p className="text-gray-500 mb-2">{member.role}</p>
+                            <p className="text-gray-500 mb-2">{member.matric}</p>
+                            <p className="text-gray-500 mb-2">{member.department}</p>
                             <p className="text-gray-700 mb-4">{member.bio}</p>
                             <div className="flex justify-center gap-4 text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-4 left-0 w-full">
                                 {member.twitter && <a href={member.twitter} target="_blank" rel="noopener noreferrer"><FaTwitter size={24} /></a>}
