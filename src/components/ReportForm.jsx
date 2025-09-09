@@ -52,10 +52,10 @@ export default function ReportForm() {
   };
 
   return (
-    <div className="w-full flex justify-center p-3">
-      <form
+    <div className="w-full flex flex-col justify-center p-3">
+     <form
         onSubmit={handleSubmit}
-        className="w-full max-w-lg bg-white space-y-4"
+        className="w-full max-w-lg bg-white space-y-4 md:p-8 p-4 rounded-lg shadow"
       >
         <input
           className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"

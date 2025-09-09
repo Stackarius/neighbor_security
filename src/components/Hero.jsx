@@ -10,6 +10,7 @@ const Hero = () => {
     const [role, setRole] = useState(null);
 
     useEffect(() => {
+        // fetch user
         const fetchUser = async () => {
             try {
                 const { data, error } = await supabase.auth.getUser();

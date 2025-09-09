@@ -58,10 +58,9 @@ export default function Dashboard() {
         </header>
 
         {/* Dashboard Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="flex flex-col md:flex-row">
           {/* Reports List */}
           <motion.div
-            whileHover={{ scale: 1.01 }}
             className="lg:col-span-2 md:p-3"
           >
             <h3 className="text-lg font-semibold text-gray-800 mb-4">
@@ -72,8 +71,7 @@ export default function Dashboard() {
 
           {/* Report Form */}
           <motion.div
-            whileHover={{ scale: 1.01 }}
-            className="bg-white shadow-md rounded md:p-3 border border-gray-100"
+            className="bg-white rounded md:p-3"
           >
             <h3 className="text-lg text-center font-semibold text-gray-800 my-4">
               Submit a Report
