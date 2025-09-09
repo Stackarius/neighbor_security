@@ -29,15 +29,7 @@ export default function AboutUs() {
             linkedin: "#",
             github: "#",
         },
-        {
-            name: "Stackr",
-            role: "Developer",
-            bio: "Builds and maintains the project’s applications, ensuring smooth user experience.",
-            img: "/male.jpg",
-            twitter: "https://twitter.com/",
-            linkedin: "https://linkedin.com/",
-            github: "https://github.com/",
-        },
+
     ];
 
     const containerVariants = {
@@ -123,7 +115,7 @@ export default function AboutUs() {
                 viewport={{ once: true, amount: 0.2 }}
             >
                 <h2 className="text-3xl font-bold text-indigo-700 text-center mx-auto mb-8 border-b-2 border-indigo-200 block pb-2">Meet Our Team</h2>
-                <div className="max-w-6xl mx-auto items-center grid sm:grid-cols-2 md:grid-cols-3 gap-8">
+                <div className="max-w-6xl mx-auto items-center grid sm:grid-cols-2 md:grid-cols-2 gap-8">
                     {team.map((member, idx) => (
                         <motion.div key={idx} variants={fadeUpVariant} className="bg-white shadow-lg rounded-lg p-6 text-center hover:scale-105 transition-transform relative group overflow-hidden">
                             <img

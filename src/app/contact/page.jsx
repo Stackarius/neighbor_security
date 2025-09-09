@@ -141,9 +141,8 @@ export default function ContactUs() {
 
                 <div className="flex justify-center gap-6 text-blue-600">
                     <a href="https://twitter.com/Stackarius" target="_blank" rel="noopener noreferrer" className="hover:text-blue-800 transition-colors"><FaTwitter size={28} /></a>
-                    <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" className="hover:text-blue-800 transition-colors"><FaLinkedin size={28} /></a>
                     <a href="https://github.com/Stackarius" target="_blank" rel="noopener noreferrer" className="hover:text-blue-800 transition-colors"><FaGithub size={28} /></a>
-                    <a href="mailto:developer@example.com" className="hover:text-blue-800 transition-colors"><FaEnvelope size={28} /></a>
+                    <a href="mailto:opepoju@gmail.com" className="hover:text-blue-800 transition-colors"><FaEnvelope size={28} /></a>
                 </div>
             </div>
 
