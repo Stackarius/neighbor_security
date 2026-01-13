@@ -6,6 +6,19 @@ import { toast } from "react-toastify";
 import { supabase } from "@/lib/supabaseClient";
 import { Send } from "lucide-react";
 
+const INCIDENT_TYPES = [
+  "Fire/Smoke",
+  "Medical Emergency",
+  "Security Breach",
+  "Vandalism",
+  "Theft",
+  "Assault",
+  "Accident/Injury",
+  "Utility Failure",
+  "Noise Complaint",
+  "Other"
+];
+
 export default function ReportForm() {
   const router = useRouter();
   const [title, setTitle] = useState("");
@@ -53,17 +66,27 @@ export default function ReportForm() {
 
   return (
     <div className="w-full flex flex-col justify-center p-3">
-     <form
+      <form
         onSubmit={handleSubmit}
         className="w-full max-w-lg bg-white space-y-4 md:p-8 p-4 rounded-lg shadow"
       >
-        <input
-          className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          type="text"
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Incident Type
+          </label>
+          <select
+            className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          >
+            <option value="">Select an incident type...</option>
+            {INCIDENT_TYPES.map((incident) => (
+              <option key={incident} value={incident}>
+                {incident}
+              </option>
+            ))}
+          </select>
+        </div>
 
         <textarea
           className="w-full border rounded-lg p-3 resize-none focus:ring-2 focus:ring-blue-500 focus:outline-none"
